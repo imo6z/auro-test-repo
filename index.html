@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <title>AURO | ركن قهوة اورو – ركن مشروبات فاخر لمناسباتك</title>
+  <meta name="description"
+    content="AURO – خدمة تأجير ركن قهوة اورو الفاخر لمناسباتكم في الدمام والخبر والظهران. احجز الآن!" />
+  <meta name="keywords"
+    content="ركن قهوة، كورنر اورو، مناسبات، الدمام، الخبر، الظهران، قهوة، AURO، حفلات، تأجير ركن قهوة" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://auro-ksa.com/" />
+  <meta name="theme-color" content="#C5A059" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AURO | ركن قهوة اورو" />
+  <meta property="og:description" content="ركن قهوة اورو الفاخر لمناسباتك – الدمام، الخبر، الظهران" />
+  <meta property="og:image" content="https://auro-ksa.com/AUROwebsitebg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://auro-ksa.com/" />
+  <meta property="og:locale" content="ar_SA" />
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AURO | ركن قهوة اورو" />
+  <meta name="twitter:description" content="كورنر اورو الفاخر لمناسباتك" />
+  <meta name="twitter:image" content="https://auro-ksa.com/AUROwebsitebg.png" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <noscript>
+    <style>
+      #preloader {
+        display: none !important;
+      }
+
+      body {
+        overflow: auto !important;
+      }
+    </style>
+  </noscript>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "AURO | ركن قهوة اورو",
+    "description": "خدمة تأجير ركن قهوة اورو فاخرة للمناسبات في المنطقة الشرقية",
+    "url": "https://auro-ksa.com/",
+    "telephone": "+966579383960",
+    "email": "auro.ksa@gmail.com",
+    "priceRange": "$$$",
+    "areaServed": ["الدمام", "الخبر", "الظهران"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "الدمام",
+      "addressRegion": "المنطقة الشرقية",
+      "addressCountry": "SA"
+    },
+    "openingHours": "Mo-Su 00:00-23:59"
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- PRELOADER -->
+  <div id="preloader">
+    <img src="logo.png" alt="AURO - ركن قهوة فاخر" class="preloader-logo" />
+    <div class="preloader-bar">
+      <div class="preloader-fill"></div>
+    </div>
+  </div>
+
+  <!-- Cinematic Transition Overlay -->
+  <div id="page-transition">
+    <div class="transition-bg"></div>
+    <div class="transition-content">
+      <img src="logo.png" alt="AURO" class="transition-logo" />
+      <div class="transition-line"></div>
+    </div>
+  </div>
+
+
+  <!-- Background -->
+  <div id="bg-slideshow"></div>
+  <div id="bg-overlay"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toast-icon"></span>
+    <span class="toast-msg" id="toast-msg"></span>
+  </div>
+
+  <!-- Floating WhatsApp -->
+  <a href="https://wa.me/966579383960?text=أهلاً%20فريق%20AURO،%20لدي%20استفسار%20بخصوص%20حجز%20ركن%20القهوة"
+    target="_blank" id="wa-float" title="تواصل معنا عبر واتساب">
+    <svg width="28" height="28" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+      <path fill="currentColor"
+        d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.7 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+    </svg>
+  </a>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="lbClose(event)">
+    <div class="lb-close" onclick="lbClose()">✕</div>
+    <div class="lb-prev lb-nav" onclick="lbNav(-1)">›</div>
+    <img id="lb-img" src="" alt="" />
+    <div class="lb-next lb-nav" onclick="lbNav(1)">‹</div>
+  </div>
+
+  <!-- NAV -->
+  <nav id="mainNav">
+    <div class="nav-logo">
+      <img src="favicon.png" alt="AURO Logo" />
+      <span>AURO</span>
+    </div>
+    <div class="nav-links">
+      <a href="#hero">الرئيسية</a>
+      <a href="#packages">الباقات</a>
+      <a href="#gallery">المعرض</a>
+      <a href="#faq">الأسئلة</a>
+      <a href="#policies">السياسات</a>
+      <a href="#contact">تواصل</a>
+    </div>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#hero" onclick="closeMenu()">الرئيسية</a>
+    <a href="#packages" onclick="closeMenu()">الباقات</a>
+    <a href="#gallery" onclick="closeMenu()">المعرض</a>
+    <a href="#faq" onclick="closeMenu()">الأسئلة الشائعة</a>
+    <a href="#policies" onclick="closeMenu()">السياسات</a>
+    <a href="#contact" onclick="closeMenu()">تواصل معنا</a>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow reveal">AURO COFFEE CORNER</div>
+      <img src="logo.png" class="hero-logo" alt="AURO Logo" />
+      <h1 class="hero-title reveal reveal-delay-1">
+        لحظاتك الرائعة<br />
+        <strong>تستحق قهوة بفخامة الذهب</strong>
+      </h1>
+      <p class="hero-subtitle reveal reveal-delay-2">ركن المشروبات الفاخر · المنطقة الشرقية</p>
+      <div class="hero-cta reveal reveal-delay-3">
+        <a href="booking.html" class="btn-primary">احجز ركنك الآن</a>
+        <button class="btn-outline"
+          onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">تصفح
+          الأعمال</button>
+      </div>
+      <div class="scroll-indicator">
+        <span>اكتشف</span>
+        <div class="scroll-arrow"></div>
+      </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="stats">
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-number">٣</div>
+        <div class="stat-label">مدن في المنطقة الشرقية</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-1">
+        <div class="stat-number">٥</div>
+        <div class="stat-label">ساعات خدمة متواصلة</div>
+      </div>
+      <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-number">٥★</div>
+        <div class="stat-label">تقييم العملاء</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-header reveal">
+      <span class="section-tag">رحلتك معنا</span>
+      <h2 class="section-title">كيف <span style="color:var(--gold)">نشتغل؟</span></h2>
+    </div>
+    <div class="hiw-timeline">
+      <div class="hiw-line" id="hiw-line"></div>
+      <div class="hiw-step reveal" data-hiw="1">
+        <div class="hiw-icon">📱</div>
+        <div class="hiw-content">
+          <h3>احجز ركنك</h3>
+          <p>اختر باقتك ومشروباتك المفضلة وأرسل طلبك خلال دقائق</p>
+        </div>
+        <div class="hiw-number">01</div>
+      </div>
+      <div class="hiw-step reveal reveal-delay-1" data-hiw="2">
+        <div class="hiw-icon">💬</div>
+        <div class="hiw-content">
+          <h3>نتواصل معك</h3>
+          <p>فريقنا يتواصل معك عبر واتساب لتأكيد التفاصيل والدفع</p>
+        </div>
+        <div class="hiw-number">02</div>
+      </div>
+      <div class="hiw-step reveal reveal-delay-2" data-hiw="3">
+        <div class="hiw-icon">⚙️</div>
+        <div class="hiw-content">
+          <h3>نجهّز يومك</h3>
+          <p>نصل قبل المناسبة بساعة ونجهّز الركن بكامل أناقته</p>
+        </div>
+        <div class="hiw-number">03</div>
+      </div>
+      <div class="hiw-step reveal reveal-delay-3" data-hiw="4">
+        <div class="hiw-icon">✨</div>
+        <div class="hiw-content">
+          <h3>نصنع اللحظة</h3>
+          <p>نقدّم لضيوفك تجربة مشروبات فاخرة لا تُنسى طوال المناسبة</p>
+        </div>
+        <div class="hiw-number">04</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:52px" class="reveal reveal-delay-3">
+      <a href="booking.html" class="btn-primary">ابدأ الحجز الآن ✨</a>
+    </div>
+  </section>
+
+  <!-- 3D COVER FLOW GALLERY -->
+  <section id="gallery" class="reveal">
+    <div class="section-header">
+      <span class="section-tag">أبعاد أورو</span>
+      <h2 class="section-title">عدسة <span style="color:var(--gold)">الفخامة</span></h2>
+    </div>
+    <div class="cards-stack-container">
+      <div class="cards-stack" id="cards-stack">
+        <div class="stack-card" style="background-image: url('bg1.png');"></div>
+        <div class="stack-card" style="background-image: url('bg2.png');"></div>
+        <div class="stack-card" style="background-image: url('bg3.png');"></div>
+        <div class="stack-card" style="background-image: url('bg4.png');"></div>
+        <div class="stack-card" style="background-image: url('bg5.png');"></div>
+        <div class="stack-card" style="background-image: url('bg6.png');"></div>
+        <div class="stack-card" style="background-image: url('bg7.png');"></div>
+        <div class="stack-card" style="background-image: url('bg8.png');"></div>
+      </div>
+      <div class="stack-controls">
+        <button id="stack-next" class="rv-btn" aria-label="التالي">›</button>
+        <div class="stack-hint">اسحب الصورة</div>
+        <button id="stack-prev" class="rv-btn" aria-label="السابق">‹</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS SECTION -->
+  <section id="reviews" class="reveal">
+    <div class="section-header">
+      <span class="section-tag">أصداء أورو</span>
+      <h2 class="section-title">قالوا عن <span style="color:var(--gold)">تجربتهم</span></h2>
+    </div>
+
+    <div class="rv-spotlight">
+      <div id="reviews-track" class="rv-spot-track">
+        <!-- injected by JS -->
+        <div class="reviews-empty">✦ &nbsp; كن أول من يشارك تجربته مع أورو &nbsp; ✦</div>
+      </div>
+
+      <div class="rv-spot-controls">
+        <button class="rv-btn" id="rv-prev" aria-label="السابق">›</button>
+        <div class="rv-dots" id="rv-dots"></div>
+        <button class="rv-btn" id="rv-next" aria-label="التالي">‹</button>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top: 24px;">
+      <a href="feedback.html" class="btn-outline rv-cta">شاركنا رأيك ✦</a>
+    </div>
+  </section>
+
+
+  <!-- PACKAGES (display only) -->
+  <section id="packages">
+    <div class="section-header reveal">
+      <span class="section-tag">باقاتنا</span>
+      <h2 class="section-title">باقات <span style="color:var(--gold)">AURO</span></h2>
+      <p class="section-subtitle">كل باقة صُمِّمت بعناية لتناسب مناسبتك</p>
+    </div>
+    <div class="packages-grid">
+      <div class="pkg-card reveal">
+        <div class="pkg-icon">☕</div>
+        <div class="pkg-name">الذهبية</div>
+        <div class="pkg-cups">20 <span>كوب</span></div>
+        <div class="pkg-price">٣٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+        <div class="pkg-desc">مثالية للجمعات والمناسبات الخاصة</div>
+        <div class="pkg-features">
+          <div class="pkg-feature">الركن الخشبي الفاخر</div>
+          <div class="pkg-feature">حافظة ثلج</div>
+          <div class="pkg-feature">مشروب واحد مختار</div>
+        </div>
+        <a href="booking.html?pkg=gold" class="btn-primary pkg-book-btn">احجز الآن</a>
+      </div>
+      <div class="pkg-card featured reveal reveal-delay-1">
+        <div class="pkg-icon">✨</div>
+        <div class="pkg-name" style="color:var(--gold)">البلاتينية</div>
+        <div class="pkg-cups">40 <span>كوب</span></div>
+        <div class="pkg-price">٤٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+        <div class="pkg-desc">للمناسبات الأنيقة والمتوسطة</div>
+        <div class="pkg-features">
+          <div class="pkg-feature">الركن الخشبي الفاخر</div>
+          <div class="pkg-feature">حافظة ثلج</div>
+          <div class="pkg-feature">مشروبان مختاران</div>
+        </div>
+        <a href="booking.html?pkg=platinum" class="btn-primary pkg-book-btn">احجز الآن</a>
+      </div>
+      <div class="pkg-card reveal reveal-delay-2">
+        <div class="pkg-icon">👑</div>
+        <div class="pkg-name">الملكية</div>
+        <div class="pkg-cups">60 <span>كوب</span></div>
+        <div class="pkg-price">٥٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+        <div class="pkg-desc">لحفلاتكم الكبرى والمناسبات الرسمية</div>
+        <div class="pkg-features">
+          <div class="pkg-feature">الركن الخشبي الفاخر</div>
+          <div class="pkg-feature">حافظة ثلج</div>
+          <div class="pkg-feature">ثلاثة مشروبات مختارة</div>
+        </div>
+        <a href="booking.html?pkg=royal" class="btn-primary pkg-book-btn">احجز الآن</a>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-header reveal">
+      <span class="section-tag">كل ما تحتاج معرفته</span>
+      <h2 class="section-title">الأسئلة <span style="color:var(--gold)">الشائعة</span></h2>
+    </div>
+    <div class="faq-wrap">
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          <h3>ما هي المناطق التي يغطيها AURO؟</h3>
+          <div class="faq-icon-btn">+</div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">نخدم حالياً مدن الدمام، الخبر، والظهران في المنطقة الشرقية. ونتطلع للتوسع لمناطق أخرى
+            قريباً.</div>
+        </div>
+      </div>
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          <h3>كم تستغرق مدة الخدمة؟</h3>
+          <div class="faq-icon-btn">+</div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">مدة بقاء الركن 5 ساعات متواصلة، أو حتى نفاد كمية الأكواب المتفق عليها في الباقة،
+            أيهما أسبق.</div>
+        </div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          <h3>هل يمكن طلب أكواب إضافية أثناء المناسبة؟</h3>
+          <div class="faq-icon-btn">+</div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">يُفضَّل تأكيد العدد قبل الموعد بـ 24 ساعة. يمكن التواصل مع الفريق الميداني وسنبذل
+            قصارى جهدنا لتلبية الطلب حسب التوفر.</div>
+        </div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          <h3>ماذا تشمل باقة التأجير؟</h3>
+          <div class="faq-icon-btn">+</div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">تشمل الباقة: ركن اورو، الأكواب المختارة، المشروبات المختارة، وحافظة ثلج.</div>
+        </div>
+      </div>
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          <h3>متى يصل الفريق للتجهيز؟</h3>
+          <div class="faq-icon-btn">+</div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">يلتزم فريق AURO بالوصول قبل موعد المناسبة بـ 30 إلى 60 دقيقة لضمان التجهيز الكامل
+            واستقبال ضيوفك بأفضل صورة.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POLICIES -->
+  <section id="policies">
+    <div class="section-header reveal">
+      <span class="section-tag">الشفافية أساس الثقة</span>
+      <h2 class="section-title">السياسات <span style="color:var(--gold)">والشروط</span></h2>
+    </div>
+    <div class="policy-card reveal" style="margin-bottom:24px">
+      <h3 style="color:var(--gold);font-size:1.3rem;margin-bottom:28px;font-weight:700">سياسة الحجز والإلغاء</h3>
+      <div class="policy-item">
+        <h4>تأكيد الحجز</h4>
+        <p>لا يعتبر الحجز مؤكداً إلا بعد دفع المبلغ كاملاً.</p>
+      </div>
+      <div class="policy-item">
+        <h4>تعديل الموعد</h4>
+        <p>يمكن تعديل تاريخ المناسبة قبل الموعد بـ 48 ساعة، بشرط توفر التاريخ الجديد.</p>
+      </div>
+      <div class="policy-item">
+        <h4>سياسة الإلغاء</h4>
+        <ul>
+          <li>إلغاء قبل الموعد بـ 3 أيام أو أكثر: استرداد كامل</li>
+          <li>إلغاء قبل الموعد بـ 24–48 ساعة: خصم 50% (تغطية تكاليف التجهيز)</li>
+          <li>إلغاء يوم المناسبة: لا يُسترد المبلغ</li>
+        </ul>
+      </div>
+    </div>
+    <div class="policy-card reveal">
+      <h3 style="color:var(--gold);font-size:1.3rem;margin-bottom:28px;font-weight:700">الشروط والأحكام</h3>
+      <div class="policy-item">
+        <h4>المكان والخدمة</h4>
+        <p>يلتزم العميل بتوفير مساحة مناسبة للركن ومصدر كهرباء قريب عند الحاجة.</p>
+      </div>
+      <div class="policy-item">
+        <h4>سلامة الأدوات</h4>
+        <p>العميل مسؤول عن سلامة الركن والأدوات من العبث أو التلف المتعمد خلال المناسبة.</p>
+      </div>
+      <div class="policy-item">
+        <h4>الجودة والالتزام</h4>
+        <p>يلتزم AURO بتقديم المشروبات بأعلى معايير الجودة وتقديم خدمة احترافية طوال المناسبة.</p>
+      </div>
+      <div class="policy-item">
+        <h4>الظروف القهرية</h4>
+        <p>في حال حدوث ظرف طارئ يمنع تقديم الخدمة، يُلتزم بإعادة كامل المبلغ مع تقديم خصم خاص للمناسبة القادمة.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <span class="section-tag">نحن هنا دائماً</span>
+      <h2 class="section-title">تواصل <span style="color:var(--gold)">معنا</span></h2>
+      <p class="section-subtitle">فريقنا جاهز للإجابة على جميع استفساراتك</p>
+    </div>
+    <div class="social-grid reveal">
+      <a href="https://wa.me/966579383960" target="_blank" class="contact-card whatsapp">
+        <div class="card-icon">
+          <svg width="28" height="28" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor"
+              d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.7 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <span class="card-title">واتساب</span>
+          <span class="card-desc">تواصل مباشر وسريع</span>
+        </div>
+      </a>
+      <a href="https://instagram.com/Auro.ksa" target="_blank" class="contact-card instagram">
+        <div class="card-icon">
+          <svg width="28" height="28" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor"
+              d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <span class="card-title">إنستقرام</span>
+          <span class="card-desc">تابع جديد أعمالنا</span>
+        </div>
+      </a>
+      <a href="https://tiktok.com/@auro.ksa" target="_blank" class="contact-card tiktok">
+        <div class="card-icon">
+          <svg width="28" height="28" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor"
+              d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.32c7.87 33.32 31.27 60.53 61.11 73.99 13.34 5.96 28.53 9.35 44.8 9.35a29 29 0 0 1 0 58.21 210.06 210.06 0 0 1-5 0z" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <span class="card-title">تيك توك</span>
+          <span class="card-desc">كواليس وتجهيزات</span>
+        </div>
+      </a>
+      <a href="https://x.com/auroksa" target="_blank" class="contact-card twitter">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="currentColor"
+              d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.497h2.039L6.486 3.24H4.298l13.309 17.41z" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <span class="card-title">تويتر</span>
+          <span class="card-desc">أخبارنا وتحديثاتنا</span>
+        </div>
+      </a>
+      <a href="mailto:auro.ksa@gmail.com" class="contact-card email">
+        <div class="card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </div>
+        <div class="card-content">
+          <span class="card-title">البريد الإلكتروني</span>
+          <span class="card-desc">للمخاطبات الرسمية</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <img src="favicon.png" class="footer-logo" alt="AURO" />
+    <p class="footer-text">AURO · ركن قهوة اورو · 2026</p>
+    <p class="footer-text" style="margin-top:8px;letter-spacing:2px">المنطقة الشرقية · المملكة العربية السعودية</p>
+  </footer>
+
+  <!-- Audio Control -->
+  <button id="audio-toggle" title="تحكم في الصوت" aria-label="Toggle Audio">
+    <svg id="audio-on" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+    </svg>
+    <svg id="audio-off" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+    </svg>
+  </button>
+  <!-- Scroll Top -->
+  <div id="scrollTop" aria-label="Back to Top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </div>
+
+  <script src="feedback-service.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

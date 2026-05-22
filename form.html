@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURO | نموذج استلام وتسليم</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Firebase Core -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    :root {
+      --gold: #C5A059;
+      --gold-light: #D4B67A;
+      --dark-bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-main: #222222;
+      --text-dim: #666666;
+      --border-color: #cccccc;
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--dark-bg);
+      color: var(--text-main);
+      margin: 0; padding: 20px;
+      display: flex; justify-content: center;
+      line-height: 1.6;
+    }
+    .form-container {
+      background-color: var(--card-bg);
+      width: 100%; max-width: 900px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 40px; box-sizing: border-box;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      position: relative; overflow: hidden;
+    }
+    .form-container::before {
+      content: "";
+      position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    /* Header */
+    .header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 15px; margin-bottom: 30px;
+    }
+    .logo-area h1 { margin: 0; color: var(--gold); font-size: 2rem; letter-spacing: 2px; }
+    .logo-area p { margin: 5px 0 0; font-size: 1rem; color: var(--text-dim); }
+    .form-meta { text-align: left; }
+    .form-meta h2 { margin: 0 0 5px; font-size: 1.4rem; color: #111; }
+    .form-meta div { font-size: 0.95rem; margin-bottom: 5px; }
+    
+    .badge {
+      display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: 600;
+    }
+    .badge.signed { background: rgba(40,167,69,0.15); color: #28a745; }
+    .badge.pending { background: rgba(255,193,7,0.15); color: #d39e00; }
+
+    /* Info Grid */
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+      background: #fafafa; padding: 20px; border: 1px solid #eee; border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .info-row { font-size: 0.95rem; }
+    .info-label { font-weight: bold; color: var(--gold); margin-left: 5px; }
+    .info-val { font-weight: 600; }
+
+    /* Checklist Table */
+    .table-title { font-size: 1.2rem; font-weight: bold; color: #111; margin-bottom: 15px; border-right: 4px solid var(--gold); padding-right: 10px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+    th { background: #f9f9f9; padding: 12px; text-align: right; border: 1px solid #ddd; color: #333; }
+    td { padding: 10px 12px; border: 1px solid #ddd; font-size: 0.95rem; }
+    .state-ok { color: #28a745; font-weight: bold; }
+    .state-bad { color: #dc3545; font-weight: bold; }
+
+    /* Damages Section */
+    .damages-box {
+      background: rgba(220,53,69,0.05); border: 1px solid rgba(220,53,69,0.2);
+      padding: 20px; border-radius: 8px; margin-bottom: 30px;
+    }
+    .damages-box h3 { margin: 0 0 15px; color: #dc3545; font-size: 1.1rem; }
+    .dmg-row { margin-bottom: 10px; font-size: 0.95rem; }
+    .dmg-label { font-weight: bold; display: inline-block; width: 200px; }
+    
+    .notes-box {
+      background: #fdfdfd; border: 1px dashed #ccc; padding: 15px; border-radius: 8px; margin-bottom: 30px;
+    }
+
+    /* Signature */
+    .signature-area { display: flex; justify-content: space-between; border-top: 1px solid #ddd; padding-top: 30px; }
+    .sig-box { width: 45%; }
+    .sig-box h4 { margin: 0 0 15px; color: #111; }
+    .sig-stamp { border: 2px dashed #ccc; border-radius: 8px; height: 130px; display: flex; justify-content: center; align-items: center; flex-direction: column; color: #aaa; background: #fafafa; }
+    .sig-stamp.approved { border-color: #28a745; color: #28a745; background: rgba(40,167,69,0.05); }
+
+    .btn-sign {
+      background: var(--gold); color: #fff; border: none; padding: 12px 20px; font-size: 1.1rem; font-family: 'Cairo'; border-radius: 6px; cursor: pointer; transition: 0.3s; width: 100%; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.4);
+    }
+    .btn-sign:hover { background: #b08d4b; transform: translateY(-2px); }
+    .btn-sign:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    .disclaimer { font-size: 0.8rem; color: #777; text-align: justify; margin-top: 20px; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+
+    .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+    
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(197, 160, 89, 0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      .form-container { border: none; box-shadow: none; padding: 20px; }
+      .btn-sign, .print-btn { display: none !important; }
+      .no-print { display: none !important; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div style="color: var(--gold); font-size: 1.2rem;">جاري تحميل النموذج...</div>
+  </div>
+
+  <div class="form-container" id="form-content" style="display: none;">
+    <div class="header">
+      <div class="logo-area">
+        <h1>AURO</h1>
+        <p>لخدمات الضيافة والأركان</p>
+      </div>
+      <div class="form-meta">
+        <h2 id="f-title">نموذج استلام / تسليم</h2>
+        <div>رقم النموذج: <strong id="f-number" dir="ltr">---</strong></div>
+        <div>تاريخ الإنشاء: <strong id="f-date">---</strong></div>
+        <div style="margin-top:10px;">الحالة: <span id="f-status-badge" class="badge">---</span></div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-row"><span class="info-label">اسم العميل:</span> <span class="info-val" id="f-client"></span></div>
+      <div class="info-row"><span class="info-label">رقم الطلب / العقد:</span> <span class="info-val" id="f-order"></span></div>
+      <div class="info-row"><span class="info-label">رقم الجوال:</span> <span class="info-val" id="f-phone" dir="ltr"></span></div>
+      <div class="info-row"><span class="info-label">تاريخ المناسبة:</span> <span class="info-val" id="f-event-date"></span></div>
+      <div class="info-row"><span class="info-label">موقع المناسبة:</span> <span class="info-val" id="f-event-loc"></span></div>
+      <div class="info-row"><span class="info-label">نوع الركن:</span> <span class="info-val" id="f-corner"></span></div>
+    </div>
+
+    <div class="table-title">العهدة والمعدات (الجرد)</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:50%;">اسم الغرض</th>
+          <th style="width:15%;">الكمية</th>
+          <th style="width:15%;">الحالة</th>
+          <th style="width:20%;">ملاحظات</th>
+        </tr>
+      </thead>
+      <tbody id="f-items-body">
+        <!-- JS inserts items here -->
+      </tbody>
+    </table>
+
+    <div id="damages-section" class="damages-box" style="display: none;">
+      <h3>⚠️ تقرير التلفيات والخصومات</h3>
+      <div class="dmg-row"><span class="dmg-label">نوع الضرر:</span> <span id="dmg-type" style="font-weight:bold;"></span></div>
+      <div class="dmg-row"><span class="dmg-label">تفاصيل الضرر:</span> <span id="dmg-desc"></span></div>
+      <div class="dmg-row"><span class="dmg-label">قيمة التلفيات الإجمالية:</span> <span id="dmg-val" style="font-weight:bold;"></span> ريال</div>
+      <div class="dmg-row"><span class="dmg-label">المخصوم من التأمين:</span> <span id="dmg-deduct"></span> ريال</div>
+      <div class="dmg-row" style="color:#dc3545; margin-top:10px;"><span class="dmg-label">المبلغ الإضافي المستحق الدفع:</span> <strong id="dmg-extra"></strong> ريال</div>
+    </div>
+
+    <div id="notes-section" class="notes-box" style="display: none;">
+      <strong>ملاحظات:</strong> <span id="f-notes"></span>
+    </div>
+
+    <div class="disclaimer">
+      <strong>إقرار:</strong> أقر أنا الموقع أدناه بصفتي (العميل المستفيد) بأنني قمت بمعاينة جميع المعدات والأغراض المذكورة أعلاه، وأؤكد أن حالتها والكميات مطابقة لما هو مدون في هذا النموذج. في حالة الاستلام (بعد المناسبة)، أقر بأي تلفيات أو نواقص إن وجدت، وأوافق على تحمل تكاليفها حسب بنود العقد المبرم مسبقاً.
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-area">
+      <div class="sig-box">
+        <h4>المندوب المستلم / المسلّم</h4>
+        <div class="sig-stamp approved">
+          <div style="font-size:1.5rem;">✅</div>
+          <div style="font-weight:bold; margin-top:5px;">مُعتمد من إدارة AURO</div>
+        </div>
+      </div>
+      <div class="sig-box">
+        <h4>توقيع العميل المستفيد</h4>
+        <div id="client-sig-stamp" class="sig-stamp" style="padding:10px;">
+          <!-- Canvas for drawing -->
+          <div id="canvas-container" class="no-print" style="width:100%; display:flex; flex-direction:column; align-items:center;">
+            <canvas id="sig-canvas" width="280" height="120" style="border:1px dashed #ccc; background:#fff; border-radius:4px; touch-action:none;"></canvas>
+            <div style="margin-top:10px; display:flex; gap:10px; justify-content:center; width:100%;">
+              <button onclick="clearCanvas()" style="flex:1; padding:6px 0; border:1px solid #dc3545; color:#dc3545; background:transparent; border-radius:4px; cursor:pointer;">مسح 🗑️</button>
+              <button id="btn-save-sig" onclick="signForm()" style="flex:1; padding:6px 0; border:none; background:#28a745; color:#fff; border-radius:4px; cursor:pointer; font-family:'Cairo'; font-weight:bold;">اعتماد وحفظ ✅</button>
+            </div>
+            <div style="font-size:0.7rem; color:#666; margin-top:5px; text-align:center;">ارسم توقيعك داخل المربع أعلاه لاعتماد النموذج</div>
+          </div>
+          
+          <!-- Signed Result -->
+          <div id="signed-result" style="display:none; text-align:center; width:100%;">
+            <img id="sig-image" src="" alt="توقيع العميل" style="max-height:80px; max-width:100%; mix-blend-mode: multiply;" />
+            <div style="font-size:0.85rem; font-weight:bold; color:#28a745; margin-top:5px;">✅ مُعتمد وموقّع</div>
+            <div id="sig-meta" style="font-size:0.7rem; color:#555; margin-top:5px; direction:ltr;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="print-btn no-print" onclick="window.print()" style="padding:8px 20px; background:transparent; border:1px solid #111; border-radius:4px; cursor:pointer; font-family:'Cairo';">🖨️ طباعة النموذج</button>
+      <div id="qrcode"></div>
+    </div>
+  </div>
+
+  <!-- Locked Message -->
+  <div id="locked-message" style="display:none; text-align:center; margin-top:100px; padding:20px;">
+    <div style="font-size:4rem;">🔒</div>
+    <h2 style="color:var(--gold); margin-top:15px;">تم استلام النموذج مسبقاً</h2>
+    <p>تم استلام توقيعك بنجاح واعتماد النموذج. للحفاظ على معلوماتك، تم قفل المستند.</p>
+    <p style="color:#777; font-size:0.9rem;">سيتم تزويدك بنسخة معتمدة من قبل الإدارة قريباً.</p>
+  </div>
+
+  <script src="feedback-service.js"></script>
+  <script src="script.js"></script>
+  <script>
+    let formDocId = null;
+
+    async function initForm() {
+      const urlParams = new URLSearchParams(window.location.search);
+      formDocId = urlParams.get('id');
+      
+      if (!formDocId) {
+        alert("رقم النموذج مفقود!");
+        return;
+      }
+
+      try {
+        if (typeof FeedbackService !== 'undefined') {
+          FeedbackService.init();
+        }
+
+        let retries = 10;
+        while (!window.AURO_DB && retries > 0) {
+          await new Promise(r => setTimeout(r, 500));
+          retries--;
+        }
+
+        let formData = null;
+
+        if (window.AURO_DB) {
+          try {
+            const docSnap = await window.AURO_DB.collection('forms').doc(formDocId).get();
+            if (docSnap.exists) formData = docSnap.data();
+          } catch(e) {
+            console.warn("Firebase fetch error:", e);
+          }
+        }
+        
+        if (!formData) {
+          const localData = JSON.parse(localStorage.getItem('auro_forms') || '[]');
+          formData = localData.find(f => f.id === formDocId);
+        }
+
+        if (!formData) {
+          document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>النموذج غير موجود أو تم حذفه.</h2>";
+          return;
+        }
+
+        const isAdmin = urlParams.get('admin') === '1';
+        if (formData.status === 'signed' && !isAdmin) {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('locked-message').style.display = 'block';
+          return;
+        }
+
+        renderForm(formData);
+
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء تحميل النموذج.");
+      }
+    }
+
+    function renderForm(data) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form-content').style.display = 'block';
+
+      const isDelivery = data.type === 'delivery';
+      document.getElementById('f-title').textContent = isDelivery ? 'نموذج تسليم (قبل المناسبة)' : 'نموذج استلام (بعد المناسبة)';
+      document.getElementById('f-number').textContent = 'AU-FRM-' + (data.formNumber || '00000');
+      document.getElementById('f-date').textContent = new Date(data.createdAt || Date.now()).toLocaleDateString('ar-SA');
+      
+      const badge = document.getElementById('f-status-badge');
+      if (data.status === 'signed') { 
+        badge.textContent = 'مُعتمد وموقّع'; badge.className = 'badge signed'; 
+        showSignedResult(data.signatureImg, data.signedAt, data.signedIp); 
+      }
+      else { 
+        badge.textContent = 'بانتظار اعتماد العميل'; badge.className = 'badge pending'; 
+        initCanvas();
+      }
+
+      document.getElementById('f-client').textContent = data.clientName || '—';
+      document.getElementById('f-order').textContent = data.orderId || '—';
+      document.getElementById('f-phone').textContent = data.phone || '—';
+      document.getElementById('f-event-date').textContent = data.eventDate || '—';
+      document.getElementById('f-event-loc').textContent = data.eventLoc || '—';
+      document.getElementById('f-corner').textContent = data.cornerType || '—';
+
+      // Items Table
+      const tbody = document.getElementById('f-items-body');
+      tbody.innerHTML = '';
+      if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+          const tr = document.createElement('tr');
+          let stateClass = '';
+          if(item.state === 'موجود') stateClass = 'state-ok';
+          else if(item.state === 'غير موجود' || item.state === 'متضرر') stateClass = 'state-bad';
+          
+          tr.innerHTML = `
+            <td>${item.name || '—'}</td>
+            <td>${item.qty || 1}</td>
+            <td class="${stateClass}">${item.state || '—'}</td>
+            <td style="color:#666;">${item.notes || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">لا يوجد أصناف مضافة</td></tr>';
+      }
+
+      // Damages Section
+      if (!isDelivery && data.damageType && data.damageType !== '') {
+        document.getElementById('damages-section').style.display = 'block';
+        const typeMap = {
+          'loss': 'فقدان', 'break': 'كسر', 'damage': 'تلف', 'misuse': 'سوء استخدام', 'missing': 'نقص'
+        };
+        document.getElementById('dmg-type').textContent = typeMap[data.damageType] || data.damageType;
+        document.getElementById('dmg-desc').textContent = data.damageDesc || '—';
+        document.getElementById('dmg-val').textContent = data.damageVal || 0;
+        document.getElementById('dmg-deduct').textContent = data.damageDeduct || 0;
+        document.getElementById('dmg-extra').textContent = data.damageExtra || 0;
+      }
+
+      // Notes
+      if (data.notes) {
+        document.getElementById('notes-section').style.display = 'block';
+        document.getElementById('f-notes').textContent = data.notes;
+      }
+
+      new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href.split('&print=1')[0].split('?print=1')[0],
+        width: 70, height: 70,
+        colorDark : "#000", colorLight : "#fff",
+        correctLevel : QRCode.CorrectLevel.L
+      });
+
+      if (urlParams.get('print') === '1') {
+        setTimeout(() => { window.print(); }, 1000);
+      }
+    }
+
+    // Canvas Logic
+    let canvas, ctx, isDrawing = false;
+    
+    function initCanvas() {
+      canvas = document.getElementById('sig-canvas');
+      if(!canvas) return;
+      ctx = canvas.getContext('2d');
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000080';
+
+      canvas.addEventListener('mousedown', startPos);
+      canvas.addEventListener('mouseup', endPos);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startPos(e.touches[0]); }, {passive: false});
+      canvas.addEventListener('touchend', (e) => { e.preventDefault(); endPos(); }, {passive: false});
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); }, {passive: false});
+    }
+
+    function getMousePos(evt) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+    }
+
+    function startPos(e) { isDrawing = true; draw(e); }
+    function endPos() { isDrawing = false; ctx.beginPath(); }
+    function draw(e) {
+      if (!isDrawing) return;
+      const pos = getMousePos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function clearCanvas() { if(ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+    function isCanvasBlank() {
+      const blank = document.createElement('canvas');
+      blank.width = canvas.width;
+      blank.height = canvas.height;
+      return canvas.toDataURL() === blank.toDataURL();
+    }
+
+    async function signForm() {
+      if(isCanvasBlank()) {
+        alert("يرجى رسم توقيعك أولاً في المربع المخصص.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-save-sig');
+      btn.disabled = true;
+      btn.textContent = 'جاري الاعتماد...';
+
+      try {
+        let ip = 'غير معروف';
+        try {
+          const res = await fetch('https://api.ipify.org?format=json');
+          const ipData = await res.json();
+          ip = ipData.ip;
+        } catch(e) {}
+
+        const now = Date.now();
+        const signatureImg = canvas.toDataURL("image/png");
+
+        if (window.AURO_DB) {
+          await window.AURO_DB.collection('forms').doc(formDocId).update({
+            status: 'signed',
+            signedAt: now,
+            signedIp: ip,
+            signatureImg: signatureImg
+          });
+        } else {
+          let localData = JSON.parse(localStorage.getItem('auro_forms') || '[]');
+          let index = localData.findIndex(f => f.id === formDocId);
+          if (index !== -1) {
+            localData[index].status = 'signed';
+            localData[index].signedAt = now;
+            localData[index].signedIp = ip;
+            localData[index].signatureImg = signatureImg;
+            localStorage.setItem('auro_forms', JSON.stringify(localData));
+          }
+        }
+        
+        document.getElementById('form-content').style.display = 'none';
+        document.getElementById('locked-message').style.display = 'block';
+
+      } catch(err) {
+        console.error(err);
+        alert("حدث خطأ أثناء الاعتماد.");
+        btn.disabled = false;
+        btn.textContent = 'اعتماد وحفظ ✅';
+      }
+    }
+
+    function showSignedResult(imgData, timestamp, ip) {
+      document.getElementById('canvas-container').style.display = 'none';
+      const resultDiv = document.getElementById('signed-result');
+      resultDiv.style.display = 'block';
+      
+      const img = document.getElementById('sig-image');
+      img.src = imgData || '';
+      
+      const dateStr = timestamp ? new Date(timestamp).toLocaleString('ar-SA') : new Date().toLocaleString('ar-SA');
+      document.getElementById('sig-meta').innerHTML = `Time: ${dateStr}<br/>IP: ${ip || '—'}`;
+      document.getElementById('client-sig-stamp').className = 'sig-stamp approved';
+    }
+
+    document.addEventListener('DOMContentLoaded', initForm);
+  </script>
+</body>
+</html>

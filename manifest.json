@@ -1,0 +1,22 @@
+{
+  "name": "AURO Coffee Corner",
+  "short_name": "AURO",
+  "description": "ركن قهوة اورو الفاخر لمناسباتكم في الدمام والخبر والظهران",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#080808",
+  "theme_color": "#C5A059",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

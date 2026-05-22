@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /feedback.html
+Disallow: /feedback-service.js
+Disallow: /booking.js
+
+Sitemap: https://auro-ksa.com/sitemap.xml

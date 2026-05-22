@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURO | الفاتورة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Firebase Core -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    :root {
+      --gold: #C5A059;
+      --gold-light: #D4B67A;
+      --dark-bg: #0d0d0d;
+      --card-bg: #151515;
+      --text-main: #f2f2f2;
+      --text-dim: #999;
+      --border-color: rgba(197, 160, 89, 0.2);
+    }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--dark-bg);
+      color: var(--text-main);
+      margin: 0; padding: 20px;
+      display: flex; justify-content: center;
+      line-height: 1.6;
+    }
+    .invoice-container {
+      background-color: var(--card-bg);
+      width: 100%; max-width: 800px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 40px; box-sizing: border-box;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      position: relative; overflow: hidden;
+    }
+    .invoice-container::before {
+      content: "";
+      position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    }
+    /* Header */
+    .header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px; margin-bottom: 30px;
+    }
+    .logo-area h1 { margin: 0; color: var(--gold); font-size: 2rem; letter-spacing: 2px; }
+    .logo-area p { margin: 5px 0 0; font-size: 0.9rem; color: var(--text-dim); }
+    .invoice-meta { text-align: left; }
+    .invoice-meta h2 { margin: 0 0 10px; font-size: 1.4rem; color: #fff; }
+    .invoice-meta div { font-size: 0.9rem; margin-bottom: 5px; }
+    
+    .badge {
+      display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;
+    }
+    .badge.pending { background: rgba(255,193,7,0.15); color: #ffc107; }
+    .badge.paid { background: rgba(40,167,69,0.15); color: #28a745; }
+    .badge.cancelled { background: rgba(220,53,69,0.15); color: #dc3545; }
+    .badge.held { background: rgba(23,162,184,0.15); color: #17a2b8; }
+
+    /* Sections */
+    .section-title {
+      font-size: 1.1rem; color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 8px; margin: 30px 0 15px;
+    }
+    .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .info-box {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px; padding: 15px;
+    }
+    .info-row {
+      display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem;
+      border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 5px;
+    }
+    .info-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .info-label { color: var(--text-dim); }
+    .info-val { font-weight: 600; }
+
+    /* Financial Table */
+    .table-container { margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      background: rgba(197, 160, 89, 0.1); color: var(--gold);
+      padding: 12px; text-align: right; font-size: 0.95rem;
+    }
+    td {
+      padding: 15px 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.95rem;
+    }
+    .total-row {
+      background: rgba(255,255,255,0.03); font-weight: bold; font-size: 1.1rem;
+    }
+    .total-row td { border-bottom: none; border-top: 1px solid var(--border-color); color: var(--gold); }
+
+    /* Footer / Terms */
+    .terms {
+      margin-top: 30px; font-size: 0.85rem; color: var(--text-dim);
+      background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px;
+    }
+    .terms h4 { color: #fff; margin: 0 0 10px; font-size: 0.95rem; }
+    .terms ul { margin: 0; padding-right: 20px; }
+    .terms li { margin-bottom: 5px; }
+
+    .footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;
+    }
+    #qrcode { background: #fff; padding: 10px; border-radius: 8px; align-self: flex-start; }
+    
+    .loading-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--dark-bg); z-index: 999;
+      display: flex; justify-content: center; align-items: center; flex-direction: column;
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid rgba(197, 160, 89, 0.3);
+      border-top-color: var(--gold); border-radius: 50%;
+      animation: spin 1s linear infinite; margin-bottom: 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media print {
+      @page { margin: 15mm; size: A4 portrait; }
+      body { background: #fff !important; color: #000 !important; padding: 0; }
+      .invoice-container { background: #fff !important; border: none !important; box-shadow: none !important; padding: 0; width: 100%; max-width: 100%; }
+      .invoice-container::before { display: none !important; }
+      
+      * { color: #000 !important; }
+      
+      .header { border-bottom: 2px solid #000 !important; margin-bottom: 20px; padding-bottom: 15px; }
+      .logo-area h1 { font-size: 2.2rem; }
+      .logo-area p { color: #555 !important; }
+      
+      .grid-2 { gap: 15px; }
+      .info-box { background: #fff !important; border: 1px solid #000 !important; break-inside: avoid; }
+      .info-row { border-bottom: 1px dashed #aaa !important; }
+      .info-label { color: #444 !important; font-weight: bold; }
+      
+      .section-title { border-bottom: 2px solid #000 !important; font-weight: bold; margin: 20px 0 10px; padding-bottom: 5px; }
+      
+      table { border: 1px solid #000 !important; }
+      th { background: #eee !important; border-bottom: 2px solid #000 !important; font-weight: bold; }
+      td { border-bottom: 1px solid #aaa !important; }
+      .total-row { background: #fff !important; }
+      .total-row td { border-top: 2px solid #000 !important; font-weight: 700; font-size: 1.2rem; }
+      
+      .terms { background: #fff !important; border: 1px solid #000 !important; margin-top: 20px; break-inside: avoid; }
+      
+      .badge { background: transparent !important; border: 1px solid #000 !important; font-weight: bold; padding: 2px 8px; }
+      
+      .footer { display: none !important; }
+      .no-print { display: none !important; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div style="color: var(--gold); font-family: 'Outfit', 'Cairo', sans-serif;">جاري تحميل الفاتورة...</div>
+  </div>
+
+  <div class="invoice-container" id="invoice-content" style="display: none;">
+    <div class="header">
+      <div class="logo-area">
+        <h1>AURO</h1>
+        <p>لخدمات الضيافة والأركان</p>
+      </div>
+      <div class="invoice-meta">
+        <h2 id="view-title">فاتورة نهائية</h2>
+        <div>رقم المستند: <strong id="view-id">---</strong></div>
+        <div>تاريخ الإصدار: <strong id="view-date">---</strong></div>
+        <div style="margin-top:10px;">الحالة: <span id="view-status" class="badge">---</span></div>
+      </div>
+      <div id="qrcode"></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="info-box">
+        <div class="section-title" style="margin-top:0;">بيانات العميل</div>
+        <div class="info-row"><span class="info-label">الاسم:</span><span class="info-val" id="view-client"></span></div>
+        <div class="info-row"><span class="info-label">رقم الجوال:</span><span class="info-val" id="view-phone" dir="ltr"></span></div>
+        <div class="info-row"><span class="info-label">المدينة:</span><span class="info-val" id="view-city"></span></div>
+      </div>
+      <div class="info-box">
+        <div class="section-title" style="margin-top:0;">بيانات المناسبة</div>
+        <div class="info-row"><span class="info-label">نوع الركن:</span><span class="info-val" id="view-corner"></span></div>
+        <div class="info-row"><span class="info-label">تاريخ المناسبة:</span><span class="info-val" id="view-event-date"></span></div>
+        <div class="info-row"><span class="info-label">الموقع:</span><span class="info-val" id="view-event-loc"></span></div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div class="section-title">التفاصيل المالية</div>
+      <table>
+        <thead>
+          <tr>
+            <th>البيان</th>
+            <th style="text-align:left; width:150px;">القيمة (ريال)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>قيمة الخدمة التشغيلية</strong>
+              <div style="font-size:0.8rem; color:var(--text-dim); margin-top:4px;" id="view-event-details"></div>
+            </td>
+            <td style="text-align:left;" id="view-service-val"></td>
+          </tr>
+          <tr>
+            <td>
+              <strong>مبلغ التأمين (مستقل)</strong>
+              <div style="font-size:0.8rem; color:var(--text-dim); margin-top:4px;">
+                الحالة: <span id="view-deposit-status" style="font-weight:bold;"></span>
+              </div>
+            </td>
+            <td style="text-align:left;" id="view-deposit-val"></td>
+          </tr>
+          <tr class="total-row">
+            <td>الإجمالي المطلوب</td>
+            <td style="text-align:left;" id="view-total"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="terms">
+      <h4>📌 شروط وأحكام (مختصرة)</h4>
+      <ul>
+        <li id="term-quote" style="display:none; color:var(--gold);">الحجز لا يعتبر مؤكداً إلا بعد سداد الإجمالي الموضح أعلاه.</li>
+        <li>مبلغ التأمين هو مبلغ مستقل عن قيمة التشغيل، ويخضع لسياسة الفحص والاستلام الموضحة بالعقد.</li>
+        <li>أي تلف أو فقدان بالمعدات والعهدة قد يؤدي إلى خصم مباشر من مبلغ التأمين.</li>
+        <li>يخضع الحجز لبنود العقد والشروط والأحكام الخاصة بالمشروع (AURO).</li>
+      </ul>
+      <div id="view-notes-container" style="display:none; margin-top:15px; padding-top:15px; border-top:1px dashed rgba(255,255,255,0.1);">
+        <strong style="color:var(--gold);">ملاحظات:</strong> <span id="view-notes"></span>
+      </div>
+    </div>
+
+    <div class="footer no-print">
+      <div>
+        <p style="margin:0; font-size:0.85rem; color:var(--text-dim);">تم إصدار هذا المستند إلكترونياً من نظام AURO.</p>
+        <button onclick="window.print()" style="margin-top:15px; padding:8px 20px; background:var(--gold); border:none; color:#fff; border-radius:4px; cursor:pointer; font-family:'Cairo'; font-size: 1rem;">🖨️ طباعة الفاتورة</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="feedback-service.js"></script>
+  <script src="script.js"></script>
+  <script>
+    async function initInvoice() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      
+      if (!id) {
+        alert("رقم الفاتورة مفقود في الرابط!");
+        return;
+      }
+
+      try {
+        if (typeof FeedbackService !== 'undefined') {
+          FeedbackService.init();
+        }
+
+        // Wait for Firebase to initialize
+        let retries = 10;
+        while (!window.AURO_DB && retries > 0) {
+          await new Promise(r => setTimeout(r, 500));
+          retries--;
+        }
+
+        let invoiceData = null;
+
+        if (window.AURO_DB) {
+          try {
+            const docSnap = await window.AURO_DB.collection('invoices').doc(id).get();
+            if (docSnap.exists) invoiceData = docSnap.data();
+          } catch(e) {
+            console.warn("Firebase fetch error:", e);
+          }
+        }
+        
+        if (!invoiceData) {
+          const localData = JSON.parse(localStorage.getItem('auro_invoices') || '[]');
+          invoiceData = localData.find(i => i.id === id);
+        }
+
+        if (!invoiceData) {
+          document.body.innerHTML = "<h2 style='text-align:center;color:white;margin-top:50px;'>الفاتورة غير موجودة أو تم حذفها.</h2>";
+          return;
+        }
+
+        renderInvoice(invoiceData);
+
+      } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء تحميل الفاتورة.");
+      }
+    }
+
+    function renderInvoice(data) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('invoice-content').style.display = 'block';
+
+      const isQuote = data.type === 'quote';
+      document.getElementById('view-title').textContent = isQuote ? 'عرض سعر' : 'فاتورة ضريبية / نهائية';
+      document.getElementById('view-id').textContent = 'AU-INV-' + (data.invoiceNumber || '00000');
+      document.getElementById('view-date').textContent = new Date(data.createdAt || Date.now()).toLocaleDateString('ar-SA');
+      
+      const statusEl = document.getElementById('view-status');
+      if (data.status === 'paid') { statusEl.textContent = 'مدفوعة بالكامل'; statusEl.className = 'badge paid'; }
+      else if (data.status === 'cancelled') { statusEl.textContent = 'ملغية'; statusEl.className = 'badge cancelled'; }
+      else { statusEl.textContent = isQuote ? 'بانتظار التحويل' : 'غير مدفوعة'; statusEl.className = 'badge pending'; }
+
+      document.getElementById('view-client').textContent = data.clientName || '—';
+      document.getElementById('view-phone').textContent = data.phone || '—';
+      document.getElementById('view-city').textContent = data.city || '—';
+
+      document.getElementById('view-corner').textContent = data.cornerType || '—';
+      document.getElementById('view-event-date').textContent = data.eventDate || '—';
+      document.getElementById('view-event-loc').textContent = data.eventLoc || '—';
+
+      const details = [];
+      if(data.eventType) details.push('المناسبة: ' + data.eventType);
+      if(data.guests) details.push('الضيوف: ' + data.guests);
+      if(data.duration) details.push('المدة: ' + data.duration);
+      if(data.additions) details.push('إضافات: ' + data.additions);
+      document.getElementById('view-event-details').innerHTML = details.join(' &nbsp;|&nbsp; ') || 'تفاصيل الخدمة';
+
+      document.getElementById('view-service-val').textContent = parseFloat(data.serviceVal || 0).toFixed(2);
+      document.getElementById('view-deposit-val').textContent = parseFloat(data.depositVal || 0).toFixed(2);
+      document.getElementById('view-total').textContent = parseFloat(data.total || 0).toFixed(2);
+
+      const depStatus = data.depositStatus;
+      const dEl = document.getElementById('view-deposit-status');
+      if(depStatus === 'refunded') { dEl.textContent = 'تم استرجاعه'; dEl.style.color = '#28a745'; }
+      else if (depStatus === 'deducted') { dEl.textContent = 'تم خصم جزء منه'; dEl.style.color = '#ffc107'; }
+      else if (depStatus === 'not_refunded') { dEl.textContent = 'غير مسترد'; dEl.style.color = '#dc3545'; }
+      else { dEl.textContent = 'قيد الاحتفاظ (مؤقتاً)'; dEl.style.color = '#17a2b8'; }
+
+      if (isQuote) {
+        document.getElementById('term-quote').style.display = 'list-item';
+      }
+
+      if (data.notes) {
+        document.getElementById('view-notes-container').style.display = 'block';
+        document.getElementById('view-notes').textContent = data.notes;
+      }
+
+      // Generate QR Code
+      new QRCode(document.getElementById("qrcode"), {
+        text: window.location.href.split('&print=1')[0].split('?print=1')[0],
+        width: 80,
+        height: 80,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.L
+      });
+
+      if (urlParams.get('print') === '1') {
+        setTimeout(() => { window.print(); }, 1000);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initInvoice);
+  </script>
+</body>
+</html>
