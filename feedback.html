@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURO | شاركنا تجربتك</title>
+  <link rel="stylesheet" href="style-feedback.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AURO | شاركنا تجربتك" />
+  <meta property="og:description" content="قيم تجربتك مع ركن قهوة اورو" />
+  <meta property="og:image" content="https://auro-ksa.com/AUROwebsitebg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AURO | تقييم" />
+  <meta name="twitter:image" content="https://auro-ksa.com/AUROwebsitebg.png" />
+  <style>
+    /* ── FEEDBACK PAGE EXTRA POLISH ─────────────────── */
+    .hero-mini {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .hero-mini .eyebrow {
+      font-size: 0.65rem; letter-spacing: 5px; color: var(--gold);
+      text-transform: uppercase; display: block; margin-bottom: 10px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .hero-mini h1 {
+      font-size: 1.4rem; font-weight: 300;
+      color: rgba(242,234,216,0.7); line-height: 1.5; letter-spacing: 1px;
+    }
+    .hero-mini h1 strong { color: var(--text-main); font-weight: 700; }
+
+    /* Animated stars */
+    .stars-container {
+      display: flex; justify-content: center; gap: 10px;
+      direction: ltr; /* stars left-to-right: 1 2 3 4 5 */
+    }
+    .star {
+      font-size: 2.8rem; cursor: pointer;
+      color: rgba(255,255,255,0.1);
+      transition: color 0.2s, transform 0.25s cubic-bezier(.4,0,.2,1), filter 0.2s;
+      user-select: none;
+    }
+    .star:hover   { color: var(--gold-light); transform: scale(1.3) rotate(-5deg); }
+    .star.hovered { color: var(--gold-light); transform: scale(1.15); }
+    .star.selected {
+      color: var(--gold);
+      filter: drop-shadow(0 0 10px rgba(197,160,89,0.6));
+      transform: scale(1.25);
+    }
+
+    /* Rating pill row */
+    .rating-pills {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-top: 18px;
+    }
+    .rating-pill {
+      padding: 7px 16px; border-radius: 30px; font-size: 0.8rem;
+      border: 1px solid var(--glass-border); cursor: pointer;
+      color: var(--text-muted); background: transparent;
+      font-family: 'Tajawal', sans-serif;
+      transition: all 0.25s;
+    }
+    .rating-pill:hover, .rating-pill.selected {
+      background: rgba(197,160,89,0.1);
+      border-color: var(--gold); color: var(--gold);
+    }
+
+    /* Textarea char ring */
+    .char-ring {
+      display: flex; justify-content: flex-end;
+      align-items: center; gap: 6px;
+      margin-top: 6px;
+    }
+    .char-ring svg { transform: rotate(-90deg); }
+    .char-ring circle {
+      fill: none; stroke-width: 2.5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.3s;
+    }
+    .ring-bg    { stroke: rgba(255,255,255,0.08); }
+    .ring-fill  { stroke: var(--gold); }
+    .char-text  { font-size: 0.72rem; color: var(--text-dim); }
+
+    /* Floating action hint */
+    .tap-hint {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; color: var(--text-dim);
+      justify-content: center; margin-top: 14px; opacity: 0.7;
+    }
+
+    /* Name avatar preview */
+    .name-preview {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(197,160,89,0.06);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px; padding: 12px 16px;
+      margin-bottom: 18px; min-height: 54px;
+    }
+    .name-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #000; font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .name-preview p { font-size: 0.82rem; color: var(--text-muted); }
+    .name-preview strong { color: var(--text-main); }
+
+    /* Success animation line */
+    @keyframes goldPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(197,160,89,0.15); }
+      50%      { box-shadow: 0 0 50px rgba(197,160,89,0.45); }
+    }
+    .success-icon { animation: pop 0.6s cubic-bezier(.4,0,.2,1), goldPulse 2s 0.6s ease infinite; }
+
+    /* Back hint at bottom */
+    .back-hint {
+      text-align: center; margin-top: 20px;
+      font-size: 0.8rem; color: var(--text-dim);
+    }
+    .back-hint a { color: var(--gold-light); text-decoration: none; }
+    /* ── GOLDEN REVIEW CARD ───────────────────────────── */
+    .auro-card-wrap {
+      perspective: 1200px;
+      margin: 22px auto 0;
+      max-width: 360px;
+      position: relative;
+    }
+    .auro-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1.586;
+      border-radius: 20px;
+      background: linear-gradient(135deg,
+        #1A0C00 0%, #7B4A10 18%,
+        #C5A059 42%, #F5DC80 58%,
+        #D4A832 75%, #6B3B08 100%);
+      box-shadow:
+        0 24px 64px rgba(197,160,89,0.45),
+        0 6px 24px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        inset 0 -1px 0 rgba(0,0,0,0.2);
+      padding: 20px 24px 18px;
+      font-family: 'Tajawal', sans-serif;
+      overflow: hidden;
+      transition: transform 0.15s ease;
+      cursor: default;
+      user-select: none;
+    }
+    /* diagonal line texture */
+    .auro-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        108deg,
+        transparent 0px, transparent 22px,
+        rgba(255,255,255,0.045) 22px, rgba(255,255,255,0.045) 24px
+      );
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    /* specular shine */
+    .auro-card::after {
+      content: '';
+      position: absolute;
+      top: -60%; left: -40%;
+      width: 180%; height: 160%;
+      background: radial-gradient(ellipse 55% 45% at 55% 38%,
+        rgba(255,255,255,0.18) 0%, transparent 65%);
+      pointer-events: none;
+      border-radius: 20px;
+    }
+    /* shimmer sweep */
+    @keyframes cardShimmer {
+      0%   { transform: translateX(-120%) rotate(25deg); }
+      100% { transform: translateX(220%)  rotate(25deg); }
+    }
+    .card-shimmer {
+      position: absolute;
+      top: -20%; left: 0;
+      width: 45%; height: 140%;
+      background: linear-gradient(90deg,
+        transparent, rgba(255,255,255,0.18), transparent);
+      animation: cardShimmer 3.5s ease-in-out 0.8s infinite;
+      pointer-events: none;
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative; z-index: 2;
+    }
+    .card-chip {
+      width: 36px; height: 27px;
+      background: linear-gradient(135deg, #6B4A10, #E8C250, #8B5E14);
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4),
+                  inset 0 1px 0 rgba(255,255,255,0.3);
+      position: relative; overflow: hidden;
+    }
+    .card-chip::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 1.5px;
+      background: rgba(0,0,0,0.25);
+      transform: translateY(-50%);
+    }
+    .card-chip::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 1.5px;
+      background: rgba(0,0,0,0.2);
+      transform: translateX(-50%);
+    }
+    .card-brand {
+      text-align: right;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      letter-spacing: 4px;
+      color: rgba(0,0,0,0.5);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+      line-height: 1;
+    }
+    .card-brand span {
+      display: block;
+      font-size: 0.5rem;
+      letter-spacing: 2px;
+      font-weight: 400;
+      color: rgba(0,0,0,0.35);
+      margin-top: 2px;
+    }
+    .card-stars {
+      position: relative; z-index: 2;
+      text-align: center;
+      font-size: 1.55rem;
+      letter-spacing: 5px;
+      color: rgba(0,0,0,0.45);
+      margin: 8px 0 5px;
+      text-shadow:
+        0 0 14px rgba(255,200,60,0.7),
+        0 0 30px rgba(255,200,60,0.3);
+    }
+    .card-divider {
+      width: 40px; height: 1px;
+      background: rgba(0,0,0,0.2);
+      margin: 4px auto 8px;
+    }
+    .card-quote {
+      position: relative; z-index: 2;
+      text-align: center;
+      font-size: 0.65rem;
+      color: rgba(0,0,0,0.42);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+      margin-bottom: 5px;
+    }
+    .card-comment {
+      position: relative; z-index: 2;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: rgba(0,0,0,0.68);
+      line-height: 1.55;
+      min-height: 2.2em;
+      font-style: italic;
+    }
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative; z-index: 2;
+      margin-top: 8px;
+    }
+    .card-name {
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      color: rgba(0,0,0,0.52);
+      letter-spacing: 2.5px;
+    }
+    .card-meta {
+      text-align: right;
+      font-size: 0.6rem;
+      color: rgba(0,0,0,0.4);
+      letter-spacing: 1px;
+      line-height: 1.6;
+      font-family: 'Outfit', sans-serif;
+    }
+    /* Card action buttons */
+    .card-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-card-dl {
+      flex: 1; padding: 12px 0;
+      background: rgba(197,160,89,0.1);
+      border: 1px solid rgba(197,160,89,0.35);
+      color: var(--gold);
+      border-radius: 14px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .btn-card-dl:hover {
+      background: rgba(197,160,89,0.2);
+      border-color: var(--gold);
+    }
+    .btn-card-share {
+      flex: 1.4; padding: 12px 0;
+      background: linear-gradient(135deg, #C5A059, #F0D080, #C5A059);
+      background-size: 200% 100%;
+      border: none;
+      color: #1A0C00;
+      border-radius: 14px;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.88rem; font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 6px 22px rgba(197,160,89,0.4);
+      animation: btnPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes btnPulse {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+    .btn-card-share:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(197,160,89,0.55);
+    }
+    .share-hint {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 10px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="orb" style="top:-5%;right:-5%;"></div>
+  <div class="orb" style="bottom:-10%;left:-5%;opacity:0.5;animation-delay:-6s;"></div>
+
+  <header>
+    <img src="logo.png" alt="AURO Logo" class="logo-small">
+  </header>
+
+  <main class="feedback-container">
+
+    <!-- HERO MINI -->
+    <div class="hero-mini">
+      <span class="eyebrow">AURO COFFEE CORNER</span>
+      <h1>لحظتك معنا<br><strong>تستحق كلمة صادقة</strong></h1>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-steps">
+        <div class="progress-dot active"  id="dot-1"></div>
+        <div class="progress-dot"         id="dot-2"></div>
+        <div class="progress-dot"         id="dot-3"></div>
+      </div>
+      <div class="progress-bar-line">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: Star Rating ── -->
+    <div id="step-1" class="step active">
+      <div class="step-card">
+        <span class="step-label">١ من ٣ · التقييم العام</span>
+        <h2>كيف كانت <span class="g">تجربتك</span> مع أورو؟</h2>
+        <p class="muted">اختر عدد النجوم الذي تراه مناسباً</p>
+
+        <div class="stars-container" id="star-container" role="group" aria-label="تقييم من خمس نجوم">
+          <span class="star" data-value="1">★</span>
+          <span class="star" data-value="2">★</span>
+          <span class="star" data-value="3">★</span>
+          <span class="star" data-value="4">★</span>
+          <span class="star" data-value="5">★</span>
+        </div>
+
+        <p class="rating-desc" id="rating-desc" style="margin-top:14px;min-height:1.6em;"></p>
+
+        <button class="btn-next" id="btn-step1" onclick="goStep(2)" disabled>التالي →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Comment ── -->
+    <div id="step-2" class="step">
+      <div class="step-card">
+        <span class="step-label">٢ من ٣ · رأيك بكلماتك</span>
+        <h2>أخبرنا <span class="g">بتفاصيل</span> أكثر</h2>
+        <p class="muted">كل كلمة تكتبها تصنع فرقاً حقيقياً</p>
+
+        <div class="input-wrap">
+          <label for="comment-input">تجربتك</label>
+          <textarea id="comment-input" maxlength="400"
+            placeholder="ما الذي أعجبك؟ ما الذي يمكن تحسينه؟..."></textarea>
+        </div>
+
+        <!-- Char ring counter -->
+        <div class="char-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28">
+            <circle class="ring-bg"   cx="14" cy="14" r="11" stroke-dasharray="69" stroke-dashoffset="0"/>
+            <circle class="ring-fill" id="ring-arc" cx="14" cy="14" r="11"
+              stroke-dasharray="69" stroke-dashoffset="69"/>
+          </svg>
+          <span class="char-text"><span id="char-num">0</span>/400</span>
+        </div>
+
+        <button class="btn-next" onclick="goStep(3)">التالي →</button>
+        <button class="btn-skip" onclick="goStep(3)">تخطي</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Name ── -->
+    <div id="step-3" class="step">
+      <div class="step-card">
+        <span class="step-label">٣ من ٣ · بمن نتشرف؟</span>
+        <h2>آخر خطوة <span class="g">✦</span></h2>
+        <p class="muted">اسمك الكريم اختياري — سيظهر مع تقييمك عند نشره</p>
+
+        <!-- Live Name Preview -->
+        <div class="name-preview" id="name-preview">
+          <div class="name-avatar" id="name-avatar">؟</div>
+          <div>
+            <strong id="name-display">عميل مميز</strong>
+            <p>سيظهر اسمك هكذا في الموقع</p>
+          </div>
+        </div>
+
+        <div class="input-wrap">
+          <label for="name-input">الاسم (اختياري)</label>
+          <input type="text" id="name-input" placeholder="مثال: أحمد أ." maxlength="40" oninput="previewName()">
+        </div>
+
+        <button class="btn-next" id="submit-btn" onclick="submitFeedback()">
+          إرسال التقييم ✓
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Success ── -->
+    <div id="step-4" class="step">
+      <div class="step-card">
+        <div class="success-card">
+          <div class="success-icon">✓</div>
+          <div class="confetti-line">✶ ✷ ✶ ✷ ✶</div>
+          <h2>صوتك <span class="g">وصل ✶</span></h2>
+          <p class="muted" style="margin-top:8px;line-height:1.8;font-size:0.88rem">
+            أنت جزء من تجربة أورو — رأيك يصنع الفارق.
+          </p>
+        </div>
+
+        <!-- GOLDEN REVIEW CARD -->
+        <div class="auro-card-wrap">
+          <div class="auro-card" id="auro-review-card">
+            <div class="card-shimmer"></div>
+            <div class="card-top">
+              <div class="card-chip"></div>
+              <div class="card-brand">AURO<span>COFFEE CORNER</span></div>
+            </div>
+            <div class="card-stars" id="card-stars">★★★★★</div>
+            <div class="card-divider"></div>
+            <div class="card-quote">هذا تقييمي لتجربتي لركن قهوة أورو</div>
+            <div class="card-comment" id="card-comment">"تجربة لا تُنسى ✶"</div>
+            <div class="card-bottom" style="justify-content:flex-end">
+              <div class="card-meta">
+                <div id="card-rating-num">5.0 ✶</div>
+                <div id="card-year">2026 · KSA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="card-actions">
+          <button class="btn-card-dl" id="dl-btn" onclick="downloadCard()">📷 تحميل</button>
+          <button class="btn-card-share" id="share-btn" onclick="shareCard()">✶ شارك تجربتك</button>
+        </div>
+        <p class="share-hint">اضغط شارك وانشر بطاقتك مع أصحابك ✶</p>
+
+        <button class="btn-next" style="margin-top:16px;background:transparent;border:1px solid rgba(197,160,89,0.25);color:var(--gold);font-size:0.85rem"
+          onclick="window.location.href='index.html'">العودة للرئيسية</button>
+      </div>
+      <div class="back-hint">أو <a href="feedback.html">إرسال تقييم آخر</a></div>
+    </div>
+
+  </main>
+
+  <script src="feedback-service.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // ── EmailJS INIT ──────────────────────────────────────────
+    emailjs.init('D6YuxIpW4rJwgy1oG');
+    // ── STATE ─────────────────────────────────────────────────
+    let selectedRating  = 0;
+    let selectedAspects = [];
+
+    const ratingData = {
+      1: { text: '😟 نأسف لذلك، سنبذل قصارى جهدنا للتحسين' },
+      2: { text: '😐 شكراً لك، رأيك يساعدنا كثيراً' },
+      3: { text: '🙂 تقدير جميل! والقادم سيكون أرقى' },
+      4: { text: '😊 شهادة تُسعدنا من عميل مميز' },
+      5: { text: '🤩 فخورون بخدمتكم — أنتم سر نجاحنا ✦' },
+    };
+
+    // ── STARS ─────────────────────────────────────────────────
+    const stars     = document.querySelectorAll('.star');
+    const ratingDesc = document.getElementById('rating-desc');
+
+    function paintStars(upTo) {
+      stars.forEach(s => {
+        const v = parseInt(s.dataset.value);
+        s.classList.toggle('hovered',  v <= upTo && !selectedRating);
+        s.classList.toggle('selected', v <= upTo &&  selectedRating > 0);
+        if (selectedRating > 0) {
+          s.classList.toggle('selected', v <= selectedRating);
+          s.classList.remove('hovered');
+        }
+      });
+    }
+
+    stars.forEach(star => {
+      star.addEventListener('mouseenter', () => { if (!selectedRating) paintStars(parseInt(star.dataset.value)); });
+      star.addEventListener('mouseleave', () => { if (!selectedRating) paintStars(0); });
+      star.addEventListener('click', () => {
+        selectedRating = parseInt(star.dataset.value);
+        paintStars(selectedRating);
+        ratingDesc.textContent = ratingData[selectedRating].text;
+        document.getElementById('btn-step1').disabled = false;
+      });
+    });
+
+    // ── ASPECT PILLS ──────────────────────────────────────────
+    document.querySelectorAll('.rating-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const asp = pill.dataset.asp;
+        pill.classList.toggle('selected');
+        if (pill.classList.contains('selected')) {
+          if (!selectedAspects.includes(asp)) selectedAspects.push(asp);
+        } else {
+          selectedAspects = selectedAspects.filter(a => a !== asp);
+        }
+      });
+    });
+
+    // ── NAME PREVIEW ──────────────────────────────────────────
+    function previewName() {
+      const val = document.getElementById('name-input').value.trim();
+      const display = val || 'عميل مميز';
+      document.getElementById('name-display').textContent = display;
+      document.getElementById('name-avatar').textContent  = val ? val.charAt(0) : '✦';
+    }
+
+    // ── CHAR COUNTER ──────────────────────────────────────────
+    const commentInput = document.getElementById('comment-input');
+    const charNum      = document.getElementById('char-num');
+    const ringArc      = document.getElementById('ring-arc');
+    const CIRC         = 69; // 2π × 11
+
+    commentInput.addEventListener('input', () => {
+      const len = commentInput.value.length;
+      const pct = len / 400;
+      charNum.textContent = len;
+      ringArc.style.strokeDashoffset = CIRC * (1 - pct);
+    });
+
+    // ── PROGRESS ──────────────────────────────────────────────
+    const TOTAL_STEPS = 3;
+    const progFill    = document.getElementById('progress-fill');
+    const dots        = [1,2,3].map(i => document.getElementById('dot-' + i));
+
+    function goStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-' + n).classList.add('active');
+
+      const pct = Math.round(((n - 1) / TOTAL_STEPS) * 100);
+      progFill.style.width = pct + '%';
+
+      dots.forEach((d, i) => {
+        d.classList.remove('active','done');
+        if (i + 1 < n)      d.classList.add('done');
+        else if (i + 1 === n) d.classList.add('active');
+      });
+
+      if (n > TOTAL_STEPS) {
+        // success
+        const pw = document.getElementById('progress-wrap');
+        pw.style.opacity = '0'; pw.style.pointerEvents = 'none';
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── SUBMIT ────────────────────────────────────────────────
+    async function submitFeedback() {
+      const btn = document.getElementById('submit-btn');
+      btn.textContent = 'جاري الإرسال...';
+      btn.disabled = true;
+
+      const name    = document.getElementById('name-input').value.trim();
+      const comment = document.getElementById('comment-input').value.trim();
+      const aspects = selectedAspects.length ? selectedAspects.join('، ') : '';
+      const fullComment = aspects
+        ? (comment ? comment + '\n\nأبرز ما أعجبني: ' + aspects : 'أبرز ما أعجبني: ' + aspects)
+        : comment;
+
+      try {
+        await FeedbackService.addReview({
+          name:    name || 'عميل مميز',
+          rating:  selectedRating,
+          comment: fullComment,
+        });
+      } catch (err) {
+        console.error('Firebase Error:', err);
+      }
+
+      // ── 1. EMAIL to auro.ksa@gmail.com ────────────────────
+      const stars = '★'.repeat(selectedRating) + '☆'.repeat(5 - selectedRating);
+      let geo = null;
+      try { geo = JSON.parse(sessionStorage.getItem('auro_geo')); } catch(e) {}
+
+      emailjs.send('service_4u7a1mk', 'template_ttodsbe', {
+        title:   `⭐ تقييم جديد على AURO (${selectedRating}/5)`,
+        name:    name || 'عميل مميز',
+        email:   'auro.ksa@gmail.com',
+        message: `النجوم: ${stars}\nالتعليق: ${fullComment || '— لم يُكتب تعليق —'}\nالموقع: ${geo ? geo.city + '، ' + geo.country : '—'}\nالجهاز: ${/Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'موبايل 📱' : 'كمبيوتر 💻'}\n\n🔗 مراجعة التقييم: admin.html`,
+      }).catch(() => {});
+
+      // ── DISCORD WEBHOOK ──────────────────────────────────────
+      const discordPayload = {
+        embeds: [{
+          title: "⭐ تقييم جديد على AURO",
+          color: selectedRating >= 4 ? 0x00ff00 : (selectedRating === 3 ? 0xffff00 : 0xff0000),
+          fields: [
+            { name: "الاسم", value: name || "عميل مميز", inline: true },
+            { name: "التقييم", value: selectedRating + "/5 " + stars, inline: true },
+            { name: "التعليق", value: fullComment || "—", inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+      fetch("https://discord.com/api/webhooks/1507053229563842674/SOR6LrKOOLi_4LR8T36K-4x1wGPr0hoD6lqcQ5Rt0ibY6yzaJHY-NwYwKfInw4e1jlTT", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(discordPayload)
+      }).catch(() => {});
+
+      goStep(4);
+      buildCard(name || 'عميل مميز', selectedRating, fullComment);
+    }
+
+    // ── GOLDEN CARD ───────────────────────────────────────────────
+    let _shareData = {};
+
+    function buildCard(name, rating, comment) {
+      const filled   = '★'.repeat(rating);
+      const empty    = '☆'.repeat(5 - rating);
+      const starsStr = filled + empty;
+      const short    = comment
+        ? (comment.length > 110 ? comment.substring(0, 110) + '…' : comment)
+        : 'تجربة لا تُنسى ✶';
+      const year = new Date().getFullYear();
+
+      document.getElementById('card-stars').textContent   = starsStr;
+      document.getElementById('card-comment').textContent = '"' + short + '"';
+      document.getElementById('card-rating-num').textContent = rating + '.0 ✶';
+      document.getElementById('card-year').textContent    = year + ' · KSA';
+
+      const wrap = document.querySelector('.auro-card-wrap');
+      const card = document.getElementById('auro-review-card');
+      wrap.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width  - 0.5) * 18;
+        const y = ((e.clientY - r.top)  / r.height - 0.5) * -12;
+        card.style.transform = `perspective(900px) rotateY(${x}deg) rotateX(${y}deg) scale(1.03)`;
+      });
+      wrap.addEventListener('mouseleave', () => { card.style.transform = ''; });
+
+      _shareData = { ratingNum: rating, starsStr, comment: short, year };
+    }
+
+    // ── CANVAS 2D DRAW ───────────────────────────────────────────
+    function _rrPath(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function _wrapRTL(ctx, text, cx, y, maxW, lineH) {
+      const words = text.split(' ');
+      let line = '', curY = y;
+      for (const word of words) {
+        const test = line ? line + ' ' + word : word;
+        if (ctx.measureText(test).width > maxW && line !== '') {
+          ctx.fillText(line, cx, curY);
+          line = word; curY += lineH;
+        } else { line = test; }
+      }
+      if (line) ctx.fillText(line, cx, curY);
+    }
+
+    async function _drawCard() {
+      await document.fonts.ready;
+      const W = 860, H = 542;
+      const DPR = 2;
+      const cv = document.createElement('canvas');
+      cv.width  = W * DPR;
+      cv.height = H * DPR;
+      const ctx = cv.getContext('2d');
+      ctx.scale(DPR, DPR);
+
+      // Base fill so transparent corners are dark gold, not white
+      ctx.fillStyle = '#5C3408';
+      ctx.fillRect(0, 0, W, H);
+
+      // Clip to rounded rect for card shape
+      ctx.save();
+      _rrPath(ctx, 0, 0, W, H, 22);
+      ctx.clip();
+
+      // Gold gradient
+      const bg = ctx.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0,    '#1A0C00');
+      bg.addColorStop(0.18, '#7B4A10');
+      bg.addColorStop(0.42, '#C5A059');
+      bg.addColorStop(0.58, '#F5DC80');
+      bg.addColorStop(0.75, '#D4A832');
+      bg.addColorStop(1,    '#6B3B08');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Diagonal texture
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 2;
+      for (let i = -H; i < W + H; i += 28) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H * 0.325, H); ctx.stroke();
+      }
+
+      // Specular highlight
+      const shine = ctx.createRadialGradient(W*0.55, H*0.35, 0, W*0.55, H*0.35, W*0.45);
+      shine.addColorStop(0, 'rgba(255,255,255,0.18)');
+      shine.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = shine;
+      ctx.fillRect(0, 0, W, H);
+
+      // Chip
+      const chipG = ctx.createLinearGradient(44, 28, 98, 70);
+      chipG.addColorStop(0, '#6B4A10'); chipG.addColorStop(0.5, '#E8C250'); chipG.addColorStop(1, '#8B5E14');
+      _rrPath(ctx, 44, 28, 58, 42, 6);
+      ctx.fillStyle = chipG; ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(44, 49); ctx.lineTo(102, 49); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(73, 28); ctx.lineTo(73, 70); ctx.stroke();
+
+      // AURO brand
+      ctx.textAlign = 'right'; ctx.direction = 'ltr';
+      ctx.fillStyle = 'rgba(0,0,0,0.48)';
+      ctx.font = 'bold 26px Outfit, Arial, sans-serif';
+      ctx.fillText('AURO', W - 40, 50);
+      ctx.fillStyle = 'rgba(0,0,0,0.32)';
+      ctx.font = '11px Outfit, Arial, sans-serif';
+      ctx.fillText('COFFEE CORNER', W - 40, 66);
+
+      // Stars
+      ctx.textAlign = 'center'; ctx.direction = 'ltr';
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.shadowColor = 'rgba(255,200,60,0.65)'; ctx.shadowBlur = 18;
+      ctx.font = '46px serif';
+      ctx.fillText(_shareData.starsStr, W / 2, 185);
+      ctx.shadowBlur = 0;
+
+      // Divider
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(W / 2 - 32, 198, 64, 1.5);
+
+      // Sub-label
+      ctx.fillStyle = 'rgba(0,0,0,0.38)';
+      ctx.font = '13px Outfit, Arial, sans-serif';
+      ctx.direction = 'rtl'; ctx.textAlign = 'center';
+      ctx.fillText('هذا تقييمي لتجربتي لركن قهوة أورو', W / 2, 224);
+
+      // Comment text (RTL)
+      ctx.fillStyle = 'rgba(0,0,0,0.72)';
+      ctx.font = 'bold 21px Tajawal, Arial, sans-serif';
+      ctx.direction = 'rtl'; ctx.textAlign = 'center';
+      _wrapRTL(ctx, `"${_shareData.comment}"`, W / 2, 268, W - 100, 32);
+
+      // Bottom meta — use left-align from left edge (safest cross-browser)
+      ctx.direction = 'ltr'; ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.font = 'bold 14px Outfit, Arial, sans-serif';
+      ctx.fillText(_shareData.ratingNum + '.0  |  ' + _shareData.year + ' · KSA', 44, H - 30);
+
+      ctx.restore(); // remove rounded rect clip
+      return cv;
+    }
+
+    async function downloadCard() {
+      const btn = document.getElementById('dl-btn');
+      btn.textContent = '⏳ جاري...';
+      btn.disabled = true;
+      try {
+        const cv = await _drawCard();
+        const a = document.createElement('a');
+        a.download = 'AURO-تقييمي.png';
+        a.href = cv.toDataURL('image/png');
+        a.click();
+      } finally {
+        btn.textContent = '📷 تحميل';
+        btn.disabled = false;
+      }
+    }
+
+    async function shareCard() {
+      const btn = document.getElementById('share-btn');
+      btn.textContent = '⏳ جاري...';
+      btn.disabled = true;
+      const shareText = `تقييمي لتجربتي لركن اورو ✨\n\nauro-ksa.com`;
+      try {
+        const cv = await _drawCard();
+        cv.toBlob(async blob => {
+          const file = new File([blob], 'AURO-تقييمي.png', { type: 'image/png' });
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ title: 'تقييمي لركن قهوة AURO', text: shareText, files: [file] });
+          } else {
+            const a = document.createElement('a');
+            a.download = 'AURO-تقييمي.png';
+            a.href = cv.toDataURL('image/png');
+            a.click();
+            setTimeout(() => window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank'), 1200);
+          }
+        });
+      } catch(e) { /* user cancelled */ }
+      finally {
+        btn.textContent = '✶ شارك تجربتك';
+        btn.disabled = false;
+      }
+    }
+
+    // ── VISITOR LOG ───────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      FeedbackService.logVisitor('صفحة التقييم');
+    });
+  </script>
+</body>
+</html>

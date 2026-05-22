@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>AURO | احجز ركنك</title>
+    <meta name="description" content="احجز ركن قهوة اورو الفاخر لمناسبتك مع AURO. الدمام، الخبر، والظهران." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://auro-ksa.com/booking.html" />
+    <meta name="theme-color" content="#C5A059" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AURO | احجز ركنك" />
+    <meta property="og:description" content="احجز ركن قهوة اورو الفاخر لمناسبتك." />
+    <meta property="og:image" content="AUROwebsitebg.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <noscript>
+        <style>
+            #preloader {
+                display: none !important;
+            }
+
+            body {
+                overflow: auto !important;
+            }
+        </style>
+    </noscript>
+    <link rel="preload" as="image" href="AUROwebsitebg.png" />
+    <link rel="preload" as="image" href="logo.png" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="booking-page">
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <img src="logo.png" alt="AURO - ركن قهوة اورو" class="preloader-logo" />
+        <div class="preloader-bar">
+            <div class="preloader-fill"></div>
+        </div>
+    </div>
+
+    <!-- Cinematic Transition Overlay -->
+    <div id="page-transition">
+        <div class="transition-bg"></div>
+        <div class="transition-content">
+            <img src="logo.png" alt="AURO" class="transition-logo" />
+            <div class="transition-line"></div>
+        </div>
+    </div>
+
+
+    <!-- Background -->
+    <div id="bg-slideshow"></div>
+    <div id="bg-overlay"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toast-icon"></span>
+        <span class="toast-msg" id="toast-msg"></span>
+    </div>
+
+    <!-- BOOKING NAV -->
+    <nav id="mainNav" class="scrolled">
+        <a href="index.html" class="nav-logo" style="text-decoration:none">
+            <img src="favicon.png" alt="AURO" />
+            <span>AURO</span>
+        </a>
+        <div class="booking-nav-title">إتمام الحجز</div>
+        <a href="index.html" class="back-home-btn">← الرئيسية</a>
+    </nav>
+
+    <!-- BOOKING STEPPER -->
+    <div id="booking-stepper">
+        <div class="stepper-step active" data-step="1" onclick="goToStep(1)">
+            <div class="stepper-dot">١</div>
+            <span>الباقة</span>
+        </div>
+        <div class="stepper-line"></div>
+        <div class="stepper-step" data-step="2" onclick="goToStep(2)">
+            <div class="stepper-dot">٢</div>
+            <span>المشروبات</span>
+        </div>
+        <div class="stepper-line"></div>
+        <div class="stepper-step" data-step="3" onclick="goToStep(3)">
+            <div class="stepper-dot">٣</div>
+            <span>البيانات</span>
+        </div>
+    </div>
+
+    <!-- BOOKING CONTAINER -->
+    <div id="booking-container">
+
+        <!-- STEP 1: PACKAGES -->
+        <section id="step-packages" class="booking-step active-step">
+            <div class="section-header reveal visible">
+                <span class="section-tag">خطوة ١ من ٣</span>
+                <h2 class="section-title">اختر <span style="color:var(--gold)">باقتك</span></h2>
+                <p class="section-subtitle">كل باقة صُمِّمت بعناية لتناسب مناسبتك</p>
+            </div>
+            <div class="packages-grid">
+                <div class="pkg-card reveal visible" onclick="selectPkg(this,'الذهبية',20,1,350)">
+                    <div class="pkg-icon">☕</div>
+                    <div class="pkg-name">الذهبية</div>
+                    <div class="pkg-cups">20 <span>كوب</span></div>
+                    <div class="pkg-price">٣٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+                    <div class="pkg-desc">مثالية للجمعات والمناسبات الخاصة</div>
+                    <div class="pkg-features">
+                        <div class="pkg-feature">الركن الخشبي الفاخر</div>
+                        <div class="pkg-feature">حافظة ثلج</div>
+                        <div class="pkg-feature">مشروب واحد مختار</div>
+                    </div>
+                </div>
+                <div class="pkg-card featured reveal visible" onclick="selectPkg(this,'البلاتينية',40,2,450)">
+                    <div class="pkg-icon">✨</div>
+                    <div class="pkg-name" style="color:var(--gold)">البلاتينية</div>
+                    <div class="pkg-cups">40 <span>كوب</span></div>
+                    <div class="pkg-price">٤٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+                    <div class="pkg-desc">للمناسبات الأنيقة والمتوسطة</div>
+                    <div class="pkg-features">
+                        <div class="pkg-feature">الركن الخشبي الفاخر</div>
+                        <div class="pkg-feature">حافظة ثلج</div>
+                        <div class="pkg-feature">مشروبان مختاران</div>
+                    </div>
+                </div>
+                <div class="pkg-card reveal visible" onclick="selectPkg(this,'الملكية',60,3,550)">
+                    <div class="pkg-icon">👑</div>
+                    <div class="pkg-name">الملكية</div>
+                    <div class="pkg-cups">60 <span>كوب</span></div>
+                    <div class="pkg-price">٥٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+                    <div class="pkg-desc">لحفلاتكم الكبرى والمناسبات الرسمية</div>
+                    <div class="pkg-features">
+                        <div class="pkg-feature">الركن الخشبي الفاخر</div>
+                        <div class="pkg-feature">حافظة ثلج</div>
+                        <div class="pkg-feature">ثلاثة مشروبات مختارة</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 2: DRINKS -->
+        <section id="step-drinks" class="booking-step">
+            <button class="back-btn" onclick="goToStep(1)">→ رجوع للباقات</button>
+            <div class="section-header">
+                <span class="section-tag">خطوة ٢ من ٣</span>
+                <h2 class="section-title">اختر <span style="color:var(--gold)">مشروباتك</span></h2>
+                <p class="drinks-info" id="drinks-info-text"></p>
+            </div>
+            <div class="thermos-wrapper">
+                <div id="thermos-container" class="thermos-container"></div>
+            </div>
+            <div class="drinks-grid">
+                <div class="drink-card" onclick="toggleDrink(this,'قهوة اليوم')">
+                    <div class="drink-check">✓</div>
+                    <span class="drink-icon">☕</span>
+                    <div class="drink-name">قهوة اليوم</div>
+                </div>
+                <div class="drink-card" onclick="toggleDrink(this,'قهوة سعودية')">
+                    <div class="drink-check">✓</div>
+                    <span class="drink-icon">🫖</span>
+                    <div class="drink-name">قهوة سعودية</div>
+                </div>
+                <div class="drink-card" onclick="toggleDrink(this,'كرك')">
+                    <div class="drink-check">✓</div>
+                    <span class="drink-icon">🍵</span>
+                    <div class="drink-name">كرك</div>
+                </div>
+                <div class="drink-card" onclick="toggleDrink(this,'كركديه')">
+                    <div class="drink-check">✓</div>
+                    <span class="drink-icon">🌺</span>
+                    <div class="drink-name">كركديه</div>
+                </div>
+                <div class="drink-card" onclick="toggleDrink(this,'هوت تشوكليت')">
+                    <div class="drink-check">✓</div>
+                    <span class="drink-icon">🍫</span>
+                    <div class="drink-name">هوت تشوكليت</div>
+                </div>
+            </div>
+            <div class="step-actions"
+                style="margin-top:40px; display:flex; gap:15px; justify-content:center; width:100%;">
+                <button class="back-btn" onclick="goToStep(1)">→ رجوع للباقات</button>
+                <button class="btn-primary" onclick="goToStep(3)" style="min-width:200px;">التالي: الخطوة الأخيرة
+                    ✨</button>
+            </div>
+        </section>
+
+        <!-- STEP 3: FORM -->
+        <section id="step-form" class="booking-step">
+            <button class="back-btn" onclick="goToStep(2)">→ رجوع للمشروبات</button>
+            <div class="section-header">
+                <span class="section-tag">خطوة ٣ من ٣</span>
+                <h2 class="section-title">تأكيد <span style="color:var(--gold)">الحجز</span></h2>
+                <p class="section-subtitle">أكمل بياناتك لإتمام الطلب</p>
+            </div>
+            <div class="booking-form-wrap">
+                <div class="form-card">
+                    <form id="auroForm" novalidate>
+                        <div style="display:none;" aria-hidden="true">
+                            <input type="text" name="website_url" id="inp-honeypot" tabindex="-1" autocomplete="off" />
+                        </div>
+                        <div class="form-grid-2" style="margin-bottom:20px">
+                            <div class="field" id="f-name">
+                                <label><span>*</span> الاسم الكامل</label>
+                                <input type="text" id="inp-name" class="glass-input" placeholder="الاسم" required
+                                    minlength="3" autocomplete="name" />
+                                <span class="err-msg">اسم صحيح (٣ أحرف على الأقل)</span>
+                            </div>
+                            <div class="field" id="f-phone">
+                                <label><span>*</span> رقم الجوال</label>
+                                <input type="tel" id="inp-phone" class="glass-input" placeholder="05xxxxxxxx" required
+                                    dir="ltr" />
+                                <span class="err-msg">رقم جوال صحيح (05xxxxxxxx)</span>
+                            </div>
+                        </div>
+                        <div class="field" id="f-city" style="margin-bottom:20px">
+                            <label><span>*</span> المدينة</label>
+                            <select id="inp-city" class="glass-input" required>
+                                <option value="">اختر المدينة</option>
+                                <option>الدمام</option>
+                                <option>الخبر</option>
+                                <option>الظهران</option>
+                            </select>
+                            <span class="err-msg">الرجاء اختيار المدينة</span>
+                        </div>
+                        <div class="field" id="f-event" style="margin-bottom:20px">
+                            <label><span>*</span> نوع المناسبة</label>
+                            <input type="text" id="inp-event" class="glass-input"
+                                placeholder="مثال: حفل زفاف، عقد قران، تخرج..." required minlength="3" />
+                            <span class="err-msg">الرجاء إدخال نوع المناسبة</span>
+                        </div>
+                        <div class="form-grid-2" style="margin-bottom:20px">
+                            <div class="field" id="f-date">
+                                <label><span>*</span> تاريخ المناسبة</label>
+                                <div class="auro-calendar-container">
+                                    <input type="text" id="inp-date" class="glass-input" placeholder="اختر التاريخ"
+                                        readonly required />
+                                    <div id="auro-calendar" class="auro-calendar"></div>
+                                </div>
+                                <span class="err-msg">يجب الحجز قبل 24 ساعة على الأقل</span>
+                            </div>
+                            <div class="field" id="f-time">
+                                <label><span>*</span> وقت البدء</label>
+                                <input type="time" id="inp-time" class="glass-input" required />
+                                <span class="err-msg">الرجاء اختيار وقت البدء</span>
+                            </div>
+                        </div>
+                        <div class="field" id="f-notes" style="margin-bottom:0">
+                            <label>ملاحظات إضافية <span
+                                    style="color:var(--text-muted);font-size:.75rem">(اختياري)</span></label>
+                            <textarea id="inp-notes" class="glass-input"
+                                placeholder="عدد الضيوف المتوقع، موقع المناسبة، أي طلبات خاصة..." rows="3"
+                                style="resize:vertical;min-height:90px"></textarea>
+                        </div>
+
+                        <div class="order-summary">
+                            <div class="summary-title">📋 ملخص الطلب</div>
+                            <div class="summary-row"><span class="label">الباقة</span><span class="val"
+                                    id="sum-pkg">—</span></div>
+                            <div class="summary-row"><span class="label">عدد الأكواب</span><span class="val"
+                                    id="sum-cups">—</span>
+                            </div>
+                            <div class="summary-row"><span class="label">المشروبات المختارة</span><span class="val"
+                                    id="sum-drinks">—</span></div>
+                        </div>
+
+                        <button type="submit" id="submitBtn" class="btn-primary"
+                            style="width:100%;max-width:100%;font-size:1rem;padding:20px">
+                            <span id="submitText">تأكيد الطلب وإرسال ✨</span>
+                        </button>
+                        <p style="text-align:center;font-size:.73rem;color:var(--text-muted);margin-top:16px">
+                            بالضغط فإنك توافق على <a href="index.html#policies" style="color:var(--gold)">الشروط
+                                والأحكام</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Audio Control -->
+    <button id="audio-toggle" title="تحكم في الصوت" aria-label="Toggle Audio">
+        <svg id="audio-on" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+        <svg id="audio-off" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
+    </button>
+
+    <!-- Scroll Top -->
+    <div id="scrollTop" aria-label="Back to Top">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+    </div>
+
+    <script src="feedback-service.js"></script>
+    <script src="booking.js"></script>
+</body>
+
+</html>
