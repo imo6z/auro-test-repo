@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURO | لوحة التحكم</title>
+  <link rel="stylesheet" href="style-feedback.css">
+  <link rel="stylesheet" href="admin-core.css">
+  <!-- External Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AURO | لوحة التحكم" />
+  <meta property="og:description" content="إدارة موقع ركن قهوة اورو" />
+  <meta property="og:image" content="https://auro-ksa.com/AUROwebsitebg.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AURO | الإدارة" />
+  <meta name="twitter:image" content="https://auro-ksa.com/AUROwebsitebg.png" />
+  <style>
+    /* ── ADMIN EXTRAS ─────────────────────────────────── */
+    .section-title-sm {
+      font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 16px; font-family: 'Outfit', sans-serif;
+    }
+    /* Insight cards row */
+    .insight-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .insight-card {
+      background: var(--dark-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 18px 20px;
+    }
+    .insight-card h4 {
+      font-size: 0.77rem; color: var(--text-muted);
+      letter-spacing: 1px; margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .bar-row {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 8px; font-size: 0.8rem;
+    }
+    .bar-label { width: 90px; flex-shrink: 0; color: var(--text-muted); }
+    .bar-track {
+      flex: 1; height: 5px; border-radius: 5px;
+      background: rgba(255,255,255,0.06); overflow: hidden;
+    }
+    .bar-val {
+      height: 100%; border-radius: 5px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transition: width 0.8s cubic-bezier(.4,0,.2,1);
+    }
+    .bar-count { color: var(--gold-light); font-family: 'Outfit', sans-serif; font-size:0.78rem; }
+
+    /* Device icons */
+    .device-grid { display: flex; gap: 14px; }
+    .device-item {
+      flex: 1; text-align: center;
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--radius-sm);
+      padding: 14px 10px; border: 1px solid transparent;
+    }
+    .device-item.top { border-color: var(--glass-border); }
+    .device-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .device-name { font-size: 0.72rem; color: var(--text-muted); }
+    .device-pct  { font-size: 1rem; font-weight: 700; color: var(--gold); }
+
+    /* Search bar */
+    .search-row {
+      display: flex; gap: 10px; margin-bottom: 18px;
+    }
+    .search-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-main); font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem; padding: 10px 16px; outline: none;
+      direction: rtl; transition: border-color 0.3s;
+    }
+    .search-input:focus { border-color: var(--glass-border-active); }
+    .search-input::placeholder { color: var(--text-dim); }
+
+    .btn-export {
+      padding: 10px 18px; border-radius: var(--radius-sm);
+      background: rgba(197,160,89,0.1);
+      border: 1px solid var(--glass-border);
+      color: var(--gold); font-size: 0.82rem;
+      font-family: 'Tajawal', sans-serif; font-weight: 600;
+      cursor: pointer; transition: all 0.25s; white-space: nowrap;
+    }
+    .btn-export:hover {
+      background: rgba(197,160,89,0.18);
+      border-color: var(--gold);
+    }
+
+    /* Visitor detail expand */
+    .visitor-row { cursor: pointer; }
+    .visitor-detail {
+      display: none; background: rgba(255,255,255,0.02);
+      padding: 12px 16px; font-size: 0.8rem; color: var(--text-muted);
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .visitor-detail.open { display: block; }
+    .detail-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .detail-item span { display: block; }
+    .detail-item .dk { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 2px; }
+    .detail-item .dv { color: var(--text-main); font-size: 0.82rem; }
+
+    /* Review card extras */
+    .rv-extra { font-size: 0.75rem; color: var(--text-dim); margin-top: 8px; display: flex; gap: 14px; flex-wrap: wrap; }
+    .rv-extra span { display: flex; align-items: center; gap: 4px; }
+
+    /* Toast */
+    .admin-toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: rgba(30,30,30,0.95); border: 1px solid var(--glass-border);
+      border-radius: 12px; padding: 12px 24px;
+      font-size: 0.88rem; color: var(--text-main);
+      transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+      z-index: 9999; white-space: nowrap;
+      backdrop-filter: blur(20px);
+    }
+    .admin-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Clear data danger */
+    .danger-zone {
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: var(--radius-sm);
+      padding: 20px; margin-top: 20px;
+    }
+    .danger-zone h4 { color: var(--danger); font-size: 0.85rem; margin-bottom: 12px; }
+    .btn-danger {
+      padding: 8px 18px; border-radius: var(--radius-sm);
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.25);
+      color: var(--danger); font-size: 0.82rem;
+      font-family: 'Tajawal', sans-serif;
+      cursor: pointer; transition: all 0.25s; margin-left: 10px;
+    }
+    .btn-danger:hover { background: rgba(248,113,113,0.18); }
+
+    /* Sort select */
+    .sort-select {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border); border-radius: 8px;
+      color: var(--text-muted); font-size: 0.82rem;
+      padding: 8px 12px; outline: none; cursor: pointer;
+      font-family: 'Tajawal', sans-serif; direction: rtl;
+    }
+    .sort-select option { background: #111; }
+
+    /* Pagination */
+    .pag-row { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .pag-btn {
+      padding: 6px 14px; border-radius: 8px;
+      background: var(--dark-card); border: 1px solid var(--glass-border);
+      color: var(--text-muted); cursor: pointer; font-size: 0.82rem;
+      font-family: 'Tajawal', sans-serif; transition: all 0.2s;
+    }
+    .pag-btn:hover, .pag-btn.active { border-color: var(--gold); color: var(--gold); }
+
+    /* Count badge */
+    .count-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--gold); color: #000;
+      font-size: 0.65rem; font-weight: 700; margin-right: 6px;
+    }
+
+    /* Overview tab */
+    #tab-overview .insight-row { margin-bottom: 20px; }
+
+    .avg-rating-display {
+      text-align: center; padding: 10px 0;
+    }
+    .big-star { font-size: 2.5rem; color: var(--gold); }
+    .big-num { font-size: 1.8rem; font-weight: 700; color: var(--gold); }
+    .sub-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    @media (max-width: 600px) {
+      .insight-row { grid-template-columns: 1fr; }
+      .device-grid { flex-direction: column; }
+      .search-row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="orb" style="top:-10%;right:-10%;"></div>
+  <div class="orb" style="bottom:-10%;left:-10%;opacity:0.5;animation-delay:-6s;"></div>
+
+  <!-- ── TOAST ── -->
+  <div class="admin-toast" id="admin-toast"></div>
+
+  <!-- ── LOGIN ── -->
+  <div id="login-overlay">
+    <div class="login-card">
+      <img src="logo.png" alt="AURO" class="logo">
+      <h2><span class="gold-text">AURO</span> Dashboard</h2>
+      <input type="text"     id="username" placeholder="اسم المستخدم" autocomplete="username">
+      <input type="password" id="password" placeholder="كلمة المرور"  autocomplete="current-password">
+      <!-- CAPTCHA -->
+      <div id="captcha-wrap" style="display:flex;align-items:center;gap:10px;margin:4px 0">
+        <span id="captcha-q" style="color:var(--gold);font-size:0.9rem;font-weight:600;min-width:110px"></span>
+        <input type="number" id="captcha-ans" placeholder="الجواب" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-main);font-family:'Tajawal',sans-serif;font-size:0.9rem;padding:10px 14px;outline:none;width:100%;box-sizing:border-box" autocomplete="off">
+      </div>
+      <p class="login-err" id="login-err"></p>
+      <div id="lockout-msg" style="display:none;text-align:center;color:#f87171;font-size:0.85rem;margin-bottom:8px">🔒 محاولات كثيرة — انتظر <span id="lockout-timer"></span></div>
+      <button class="btn-next" onclick="doLogin()" id="login-btn">دخول آمن 🔒</button>
+    </div>
+  </div>
+
+  <!-- ── ADMIN ── -->
+  <main class="admin-container hidden admin-mode" id="admin-main">
+    
+    <!-- SIDEBAR -->
+    <nav class="admin-sidebar">
+      <div class="admin-brand">
+        <img src="logo.png" alt="AURO">
+        <h2>AURO <span>Admin</span></h2>
+      </div>
+      <div class="admin-nav">
+        <a class="nav-item active" data-tab="tab-overview"><span class="icon">📊</span> نظرة عامة</a>
+        <a class="nav-item" data-tab="tab-bookings"><span class="icon">📦</span> الحجوزات <span class="count-badge" id="bookings-badge">0</span></a>
+        <a class="nav-item" data-tab="tab-clients"><span class="icon">👥</span> العملاء</a>
+        <a class="nav-item" data-tab="tab-invoices"><span class="icon">🧾</span> الفواتير</a>
+        <a class="nav-item" data-tab="tab-contracts"><span class="icon">📝</span> العقود</a>
+        <a class="nav-item" data-tab="tab-forms"><span class="icon">📋</span> الاستمارات</a>
+        <a class="nav-item" data-tab="tab-reviews"><span class="icon">⭐</span> التقييمات <span class="count-badge" id="pending-badge">0</span></a>
+        <a class="nav-item" data-tab="tab-visitors"><span class="icon">👁️</span> الزوار</a>
+        <a class="nav-item" data-tab="tab-settings"><span class="icon">⚙️</span> الإعدادات</a>
+        <div style="flex:1"></div>
+        <button class="btn-dark" onclick="logout()" style="margin: 20px; color: var(--admin-danger); border-color: rgba(248,113,113,0.3)">تسجيل الخروج 🚪</button>
+      </div>
+    </nav>
+
+    <div class="admin-content">
+
+    <!-- KPI STATS -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-box"><span class="stat-icon">👁️</span><div class="stat-num" id="s-total">—</div><div class="stat-lbl">إجمالي الزيارات</div></div>
+      <div class="stat-box"><span class="stat-icon">⏱️</span><div class="stat-num" id="s-24h">—</div><div class="stat-lbl">آخر ٢٤ ساعة</div></div>
+      <div class="stat-box"><span class="stat-icon">📅</span><div class="stat-num" id="s-7d">—</div><div class="stat-lbl">آخر ٧ أيام</div></div>
+      <div class="stat-box"><span class="stat-icon">📊</span><div class="stat-num" id="s-scroll">—</div><div class="stat-lbl">متوسط التصفح</div></div>
+      <div class="stat-box"><span class="stat-icon">⭐</span><div class="stat-num" id="s-reviews">—</div><div class="stat-lbl">التقييمات</div></div>
+      <div class="stat-box"><span class="stat-icon">✅</span><div class="stat-num" id="s-approved">—</div><div class="stat-lbl">معتمدة</div></div>
+    </div>
+
+    <!-- ══ TAB: OVERVIEW ══ -->
+    <div id="tab-overview" class="admin-tab-content">
+      <div class="insight-row">
+        <!-- Referrers -->
+        <div class="insight-card">
+          <h4>🔗 مصادر الزيارات</h4>
+          <div id="referrers-chart"></div>
+        </div>
+        <!-- Cities -->
+        <div class="insight-card">
+          <h4>📍 المدن الأكثر زيارة</h4>
+          <div id="cities-chart"></div>
+        </div>
+        <!-- Devices -->
+        <div class="insight-card">
+          <h4>📱 الأجهزة</h4>
+          <div class="device-grid" id="device-chart"></div>
+        </div>
+        <!-- Avg Rating -->
+        <div class="insight-card">
+          <h4>⭐ متوسط التقييم</h4>
+          <div class="avg-rating-display">
+            <div class="big-star">★</div>
+            <div class="big-num" id="avg-rating">—</div>
+            <div class="sub-note" id="avg-rating-note">من أصل ٥ نجوم</div>
+          </div>
+        </div>
+      </div>
+      <!-- Export Row -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+        <button class="btn-export" onclick="FeedbackService.exportVisitorsCSV(); showToast('تم تصدير الزوار ✓')">⬇ تصدير الزوار CSV</button>
+        <button class="btn-export" onclick="FeedbackService.exportReviewsCSV(); showToast('تم تصدير التقييمات ✓')">⬇ تصدير التقييمات CSV</button>
+        <button class="btn-export" onclick="loadAll(); showToast('تم التحديث ✓')">↺ تحديث البيانات</button>
+      </div>
+    </div>
+
+    <!-- ══ TAB: REVIEWS ══ -->
+    <div id="tab-reviews" class="admin-tab-content hidden">
+      <div class="search-row">
+        <input class="search-input" id="review-search" placeholder="ابحث باسم العميل أو التعليق..." oninput="loadReviews()">
+        <select class="sort-select" id="review-sort" onchange="loadReviews()">
+          <option value="newest">الأحدث أولاً</option>
+          <option value="oldest">الأقدم أولاً</option>
+          <option value="highest">أعلى تقييم</option>
+          <option value="lowest">أدنى تقييم</option>
+        </select>
+        <button class="btn-export" onclick="FeedbackService.exportReviewsCSV(); showToast('تم التصدير ✓')">⬇ CSV</button>
+      </div>
+      <div class="filter-bar" id="filter-bar">
+        <span class="filter-chip active" data-filter="all"      onclick="setFilter(this,'all')">الكل</span>
+        <span class="filter-chip"        data-filter="pending"  onclick="setFilter(this,'pending')">⏳ بانتظار الموافقة</span>
+        <span class="filter-chip"        data-filter="approved" onclick="setFilter(this,'approved')">✅ معتمدة</span>
+        <span class="filter-chip"        data-filter="rejected" onclick="setFilter(this,'rejected')">✕ مرفوضة</span>
+      </div>
+      <div class="reviews-cards" id="reviews-list"></div>
+      <div class="pag-row" id="review-pag"></div>
+    </div>
+
+    <!-- ══ TAB: BOOKINGS ══ -->
+    <div id="tab-bookings" class="admin-tab-content hidden">
+      <div class="search-row">
+        <input class="search-input" id="booking-search" placeholder="ابحث بالاسم أو الجوال أو المدينة..." oninput="loadBookings()">
+        <select class="sort-select" id="booking-filter" onchange="loadBookings()">
+          <option value="all">الكل</option>
+          <option value="pending">⏳ بانتظار التأكيد</option>
+          <option value="confirmed">✅ مؤكدة</option>
+          <option value="cancelled">✕ ملغاة</option>
+        </select>
+        <button class="btn-export" onclick="exportBookingsCSV(); showToast('تم التصدير ✓')">⬇ CSV</button>
+      </div>
+      <div id="bookings-list"></div>
+    </div>
+
+    <!-- ══ TAB: VISITORS ══ -->
+    <div id="tab-visitors" class="admin-tab-content hidden">
+      <div class="search-row">
+        <input class="search-input" id="visitor-search" placeholder="ابحث بالمدينة أو المصدر أو الجهاز..." oninput="loadVisitors()">
+        <select class="sort-select" id="visitor-sort" onchange="loadVisitors()">
+          <option value="newest">الأحدث</option>
+          <option value="scroll">أعلى تصفح</option>
+        </select>
+        <button class="btn-export" onclick="FeedbackService.exportVisitorsCSV(); showToast('تم التصدير ✓')">⬇ CSV</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="visitors-table" id="visitors-table">
+          <thead>
+            <tr>
+              <th>التوقيت</th>
+              <th>الموقع</th>
+              <th>المصدر</th>
+              <th>الجهاز</th>
+              <th>آخر صفحة</th>
+              <th>التصفح</th>
+            </tr>
+          </thead>
+          <tbody id="visitors-body"></tbody>
+        </table>
+      </div>
+      <div class="pag-row" id="visitor-pag"></div>
+    </div>
+
+    <!-- ══ TAB: SETTINGS ══ -->
+    <div id="tab-settings" class="admin-tab-content hidden">
+      <div class="insight-card" style="margin-bottom:16px;">
+        <h4>🔑 بيانات الدخول للأدمن</h4>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;">يمكنك تغيير كلمة المرور مباشرة من الكود في ملف admin.html (السطر: const ADMIN_PASS)</p>
+        <div style="display:flex;gap:10px;align-items:center;font-size:0.85rem;">
+          <span style="color:var(--text-muted);">يوزر:</span> <code style="color:var(--gold)">admin</code>
+          &nbsp;&nbsp;
+          <span style="color:var(--text-muted);">باسوورد:</span> <code style="color:var(--gold)" id="pass-display">••••••••</code>
+          <button class="btn-export" style="padding:4px 10px;font-size:0.75rem" onclick="document.getElementById('pass-display').textContent = document.getElementById('pass-display').textContent === '••••••••' ? _ap : '••••••••'">عرض</button>
+        </div>
+      </div>
+      <div class="insight-card" style="margin-bottom:16px;">
+        <h4>📋 معلومات الموقع</h4>
+        <div style="font-size:0.85rem;color:var(--text-muted);line-height:2;">
+          <div>رابط التقييم: <code style="color:var(--gold)">feedback.html</code></div>
+          <div>لوحة الإدارة: <code style="color:var(--gold)">admin.html</code></div>
+          <div>التخزين: <code style="color:var(--gold)">localStorage</code> (نفس الجهاز)</div>
+          <div>API الموقع: <code style="color:var(--gold)">ipapi.co</code></div>
+        </div>
+      </div>
+      <div class="danger-zone">
+        <h4>⚠️ منطقة الخطر</h4>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:14px;">هذه الإجراءات لا يمكن التراجع عنها</p>
+        <button class="btn-danger" onclick="confirmClear('visitors')">🗑 حذف كل سجلات الزوار</button>
+        <button class="btn-danger" onclick="confirmClear('reviews')">🗑 حذف كل التقييمات</button>
+      </div>
+    </div>
+
+    </div>
+
+    <!-- ══ NEW TABS ══ -->
+    
+    <!-- ══ TAB: CLIENTS ══ -->
+    <div id="tab-clients" class="admin-tab-content hidden">
+      <div class="admin-header-bar">
+        <h1>إدارة العملاء</h1>
+        <div class="admin-header-actions">
+          <button class="btn-gold" id="btn-new-client">➕ إضافة عميل</button>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="data-table-wrap" id="clients-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: INVOICES ══ -->
+    <div id="tab-invoices" class="admin-tab-content hidden">
+      <div class="admin-header-bar">
+        <h1>الفواتير وعروض الأسعار</h1>
+        <div class="admin-header-actions">
+          <button class="btn-gold" id="btn-new-invoice">➕ إنشاء فاتورة</button>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="data-table-wrap" id="invoices-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: CONTRACTS ══ -->
+    <div id="tab-contracts" class="admin-tab-content hidden">
+      <div class="admin-header-bar">
+        <h1>العقود الإلكترونية</h1>
+        <div class="admin-header-actions">
+          <button class="btn-gold" id="btn-new-contract">➕ إنشاء عقد جديد</button>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="data-table-wrap" id="contracts-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ TAB: FORMS ══ -->
+    <div id="tab-forms" class="admin-tab-content hidden">
+      <div class="admin-header-bar">
+        <h1>استمارات الاستلام والتسليم</h1>
+        <div class="admin-header-actions">
+          <button class="btn-gold" id="btn-new-form">➕ استمارة جديدة</button>
+        </div>
+      </div>
+      <div class="data-card">
+        <div class="data-table-wrap" id="forms-list"></div>
+      </div>
+    </div>
+
+    </div> <!-- End admin-content -->
+
+    <!-- ── MODALS ── -->
+    
+    <!-- CLIENT MODAL -->
+    <div class="modal-overlay" id="modal-client">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>بيانات العميل</h3>
+          <button class="close-modal" onclick="AdminClients.closeModal()">✕</button>
+        </div>
+        <form id="form-client">
+          <div class="modal-body">
+            <input type="hidden" id="client-id">
+            <div class="form-group"><label>اسم العميل</label><input type="text" id="client-name" class="form-control" required></div>
+            <div class="form-group"><label>رقم الجوال</label><input type="text" id="client-phone" class="form-control" required></div>
+            <div class="form-group"><label>المدينة</label><input type="text" id="client-city" class="form-control"></div>
+            <div class="form-group"><label>ملاحظات داخلية</label><textarea id="client-notes" class="form-control" rows="3"></textarea></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-dark" onclick="AdminClients.closeModal()">إلغاء</button>
+            <button type="submit" class="btn-gold">حفظ التغييرات</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- INVOICE MODAL -->
+    <div class="modal-overlay" id="modal-invoice">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>فاتورة / عرض سعر</h3>
+          <button class="close-modal" onclick="AdminInvoices.closeInvoiceModal()">✕</button>
+        </div>
+        <form id="form-invoice">
+          <div class="modal-body">
+            <input type="hidden" id="inv-id">
+            
+            <div class="form-group" style="background: rgba(197, 160, 89, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+              <label style="color: var(--admin-gold); font-weight: bold;">استيراد بيانات من حجز موجود؟</label>
+              <select id="inv-import-booking" class="form-control" onchange="importBookingToInvoice(this.value)">
+                <option value="">-- تعبئة يدوية --</option>
+              </select>
+            </div>
+
+            <div class="section-title-sm">المعلومات الأساسية</div>
+            <div class="form-row">
+              <div class="form-group"><label>نوع المستند</label><select id="inv-type" class="form-control"><option value="quote">عرض سعر (قبل التحويل)</option><option value="invoice">فاتورة نهائية (بعد التحويل)</option></select></div>
+              <div class="form-group"><label>حالة الدفع</label><select id="inv-status" class="form-control"><option value="pending">غير مدفوعة</option><option value="paid">مدفوعة بالكامل</option><option value="cancelled">ملغية</option></select></div>
+            </div>
+
+            <div class="section-title-sm">بيانات العميل</div>
+            <div class="form-row">
+              <div class="form-group"><label>العميل (الاسم)</label><input type="text" id="inv-client" class="form-control" required></div>
+              <div class="form-group"><label>رقم الجوال</label><input type="text" id="inv-phone" class="form-control" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>المدينة</label><input type="text" id="inv-city" class="form-control" required></div>
+              <div class="form-group"><label>طريقة الدفع (اختياري)</label><select id="inv-pay-method" class="form-control"><option value="">تحديد...</option><option value="bank">تحويل بنكي</option><option value="cash">نقدي</option><option value="card">شبكة</option></select></div>
+            </div>
+
+            <div class="section-title-sm">بيانات المناسبة</div>
+            <div class="form-row">
+              <div class="form-group"><label>تاريخ المناسبة</label><input type="date" id="inv-event-date" class="form-control"></div>
+              <div class="form-group"><label>موقع المناسبة</label><input type="text" id="inv-event-loc" class="form-control"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>نوع الركن</label><input type="text" id="inv-corner" class="form-control" placeholder="مثال: ركن قهوة ذهبية"></div>
+              <div class="form-group"><label>نوع المناسبة</label><input type="text" id="inv-event-type" class="form-control" placeholder="مثال: حفل زفاف"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>عدد الضيوف</label><input type="number" id="inv-guests" class="form-control" placeholder="العدد المتوقع"></div>
+              <div class="form-group"><label>مدة التشغيل</label><input type="text" id="inv-duration" class="form-control" placeholder="مثال: 5 ساعات"></div>
+            </div>
+            <div class="form-group"><label>الإضافات المطلوبة (إن وجدت)</label><textarea id="inv-additions" class="form-control" rows="2"></textarea></div>
+
+            <div class="section-title-sm">المبالغ (مفصولة)</div>
+            <div class="form-row">
+              <div class="form-group"><label>قيمة الخدمة (ريال)</label><input type="number" id="inv-service-val" class="form-control" value="0" min="0" oninput="AdminInvoices.calculateTotal()"></div>
+              <div class="form-group"><label>مبلغ التأمين (ريال)</label><input type="number" id="inv-deposit-val" class="form-control" value="500" min="0" oninput="AdminInvoices.calculateTotal()"></div>
+            </div>
+            <div class="form-group"><label>حالة مبلغ التأمين</label><select id="inv-deposit-status" class="form-control"><option value="held">قيد الاحتفاظ</option><option value="refunded">تم استرجاعه</option><option value="deducted">تم خصم جزء منه</option><option value="not_refunded">غير مسترد</option></select></div>
+
+            <div class="form-group"><label>ملاحظات إضافية للفاتورة</label><textarea id="inv-notes" class="form-control" rows="2"></textarea></div>
+
+            <div style="text-align:left; margin-top:15px; font-size:1.2rem; font-weight:bold; background:rgba(255,255,255,0.02); padding:15px; border-radius:8px;">
+              الإجمالي المطلوب: <span id="inv-total-display" style="color:var(--admin-gold)">0 ريال</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-dark" onclick="AdminInvoices.closeInvoiceModal()">إلغاء</button>
+            <button type="submit" class="btn-gold">حفظ الفاتورة</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- CONTRACT MODAL -->
+    <div class="modal-overlay" id="modal-contract">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>بيانات العقد الإلكتروني</h3>
+          <button class="close-modal" onclick="AdminContracts.closeModal()">✕</button>
+        </div>
+        <form id="form-contract">
+          <div class="modal-body">
+            <input type="hidden" id="contract-id">
+            
+            <div class="form-group" style="background: rgba(197, 160, 89, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+              <label style="color: var(--admin-gold); font-weight: bold;">استيراد بيانات من حجز موجود؟</label>
+              <select id="con-import-booking" class="form-control" onchange="importBookingToContract(this.value)">
+                <option value="">-- تعبئة يدوية --</option>
+              </select>
+            </div>
+
+            <div class="section-title-sm">حالة العقد الأساسية</div>
+            <div class="form-row">
+              <div class="form-group"><label>حالة العقد</label><select id="contract-status" class="form-control"><option value="draft">مسودة</option><option value="sent">مُرسل للعميل</option><option value="signed">موقّع ومكتمل</option><option value="cancelled">ملغى</option></select></div>
+            </div>
+
+            <div class="section-title-sm">الطرف الثاني (العميل)</div>
+            <div class="form-row">
+              <div class="form-group"><label>اسم العميل</label><input type="text" id="contract-client" class="form-control" required></div>
+              <div class="form-group"><label>رقم الجوال</label><input type="text" id="contract-phone" class="form-control" required></div>
+            </div>
+            <div class="form-group"><label>المدينة</label><input type="text" id="contract-city" class="form-control"></div>
+
+            <div class="section-title-sm">موضوع العقد (تفاصيل المناسبة)</div>
+            <div class="form-row">
+              <div class="form-group"><label>نوع المناسبة</label><input type="text" id="contract-event-type" class="form-control" placeholder="مثال: زفاف" required></div>
+              <div class="form-group"><label>تاريخ المناسبة</label><input type="date" id="contract-event-date" class="form-control" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>وقت المناسبة</label><input type="text" id="contract-event-time" class="form-control" placeholder="مثال: 9:00 مساءً"></div>
+              <div class="form-group"><label>موقع المناسبة</label><input type="text" id="contract-event-loc" class="form-control" placeholder="مثال: قاعة الخزامى"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>نوع الركن</label><input type="text" id="contract-corner" class="form-control" placeholder="مثال: ركن قهوة متكامل"></div>
+              <div class="form-group"><label>عدد الضيوف</label><input type="text" id="contract-guests" class="form-control" placeholder="مثال: 100 شخص"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>مدة التشغيل</label><input type="text" id="contract-duration" class="form-control" placeholder="مثال: 4 ساعات"></div>
+            </div>
+            <div class="form-group"><label>الإضافات</label><textarea id="contract-additions" class="form-control" rows="2" placeholder="أي إضافات أخرى متفق عليها"></textarea></div>
+
+            <div class="section-title-sm">قيمة العقد</div>
+            <div class="form-row">
+              <div class="form-group"><label>قيمة الخدمة (ريال)</label><input type="number" id="contract-service-val" class="form-control" value="0" min="0" oninput="AdminContracts.calculateTotal()"></div>
+              <div class="form-group"><label>مبلغ التأمين (ريال)</label><input type="number" id="contract-deposit-val" class="form-control" value="500" min="0" oninput="AdminContracts.calculateTotal()"></div>
+            </div>
+            <div style="margin-top:10px; font-weight:bold;">الإجمالي: <span id="contract-total-display" style="color:var(--admin-gold)">0 ريال</span></div>
+            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-dark" onclick="AdminContracts.closeModal()">إلغاء</button>
+            <button type="submit" class="btn-gold">حفظ العقد</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FORM MODAL -->
+    <div class="modal-overlay" id="modal-form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>استمارة استلام / تسليم</h3>
+          <button class="close-modal" onclick="AdminForms.closeModal()">✕</button>
+        </div>
+        <form id="form-receipt">
+          <div class="modal-body">
+            <input type="hidden" id="form-id">
+            
+            <div class="form-group" style="background: rgba(197, 160, 89, 0.1); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+              <label style="color: var(--admin-gold); font-weight: bold;">استيراد بيانات من حجز موجود؟</label>
+              <select id="form-import-booking" class="form-control" onchange="importBookingToForm(this.value)">
+                <option value="">-- تعبئة يدوية --</option>
+              </select>
+            </div>
+
+            <div class="section-title-sm">معلومات الاستمارة الأساسية</div>
+            <div class="form-row">
+              <div class="form-group"><label>نوع الاستمارة</label><select id="form-type" class="form-control"><option value="delivery">تسليم (قبل المناسبة)</option><option value="receipt">استلام (بعد المناسبة)</option></select></div>
+              <div class="form-group"><label>حالة الاستمارة</label><select id="form-status" class="form-control"><option value="pending">بانتظار الاعتماد</option><option value="signed">معتمدة وموقّعة</option></select></div>
+            </div>
+
+            <div class="section-title-sm">معلومات الطلب</div>
+            <div class="form-row">
+              <div class="form-group"><label>رقم الطلب / العقد المرتبط</label><input type="text" id="form-order-id" class="form-control"></div>
+              <div class="form-group"><label>اسم العميل</label><input type="text" id="form-client" class="form-control" required></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>رقم الجوال</label><input type="text" id="form-phone" class="form-control"></div>
+              <div class="form-group"><label>تاريخ المناسبة</label><input type="date" id="form-event-date" class="form-control"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>الموقع</label><input type="text" id="form-event-loc" class="form-control"></div>
+              <div class="form-group"><label>نوع الركن</label><input type="text" id="form-corner" class="form-control"></div>
+            </div>
+
+            <div class="section-title-sm" style="margin-top:20px;">قائمة العهدة والمعدات</div>
+            <div style="background:rgba(255,255,255,0.02); padding:10px; border-radius:8px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <label style="color:var(--admin-text-muted); font-size:0.85rem;">الأغراض (تحديد الحالة والكمية)</label>
+                <button type="button" class="btn-dark" id="btn-form-add-item" style="padding: 4px 10px; font-size:0.75rem;">+ إضافة غرض</button>
+              </div>
+              <div id="form-items-container"></div>
+            </div>
+
+            <div class="section-title-sm" style="margin-top:20px;">التلفيات والخصومات (إن وجدت)</div>
+            <div class="form-row">
+              <div class="form-group"><label>نوع الضرر</label><select id="form-damage-type" class="form-control"><option value="">لا يوجد ضياع/تلف</option><option value="loss">فقدان</option><option value="break">كسر</option><option value="damage">تلف</option><option value="misuse">سوء استخدام</option><option value="missing">نقص</option></select></div>
+              <div class="form-group"><label>وصف الضرر</label><input type="text" id="form-damage-desc" class="form-control" placeholder="وصف التلف أو النقص"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>قيمة الضرر (ريال)</label><input type="number" id="form-damage-val" class="form-control" value="0" min="0"></div>
+              <div class="form-group"><label>المخصوم من التأمين (ريال)</label><input type="number" id="form-damage-deduct" class="form-control" value="0" min="0"></div>
+            </div>
+            <div class="form-group"><label>المبلغ الإضافي المستحق (ريال)</label><input type="number" id="form-damage-extra" class="form-control" value="0" min="0" placeholder="في حال تجاوز التلفيات مبلغ التأمين"></div>
+
+            <div class="section-title-sm" style="margin-top:20px;">ملاحظات</div>
+            <div class="form-group"><label>ملاحظات تشغيلية</label><textarea id="form-notes" class="form-control" rows="2"></textarea></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-dark" onclick="AdminForms.closeModal()">إلغاء</button>
+            <button type="submit" class="btn-gold">حفظ الاستمارة</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="feedback-service.js"></script>
+  <!-- Admin CRM Scripts -->
+  <script src="admin-app.js"></script>
+  <script src="admin-clients.js"></script>
+  <script src="admin-invoices.js"></script>
+  <script src="admin-contracts.js"></script>
+  <script src="admin-forms.js"></script>
+  <script>
+    // ── CONFIG ────────────────────────────────────────────────
+    const ADMIN_USER = 'admin';
+    const _ap = atob('YTh1NHI5bzQ='); // base64 encoded password
+    const PAGE_SIZE  = 10;
+    const MAX_ATTEMPTS  = 5;
+    const LOCKOUT_MS    = 15 * 60 * 1000; // 15 minutes
+    const SESSION_MS    = 30 * 60 * 1000; // 30 minutes auto-logout
+    const SESSION_SALT  = 'auro_s3cur3';
+
+    let currentFilter  = 'all';
+    let reviewPage     = 1;
+    let visitorPage    = 1;
+    let inactiveTimer  = null;
+
+    // ── CAPTCHA ───────────────────────────────────────────────
+    let _captchaAnswer = 0;
+    function newCaptcha() {
+      const a = Math.floor(Math.random() * 9) + 1;
+      const b = Math.floor(Math.random() * 9) + 1;
+      const ops = [['+', a+b], ['-', Math.max(a,b)-Math.min(a,b)], ['×', a*b]];
+      const pick = ops[Math.floor(Math.random() * ops.length)];
+      _captchaAnswer = pick[1];
+      document.getElementById('captcha-q').textContent = `كم ناتج ${Math.max(a,b)} ${pick[0]} ${Math.min(a,b)} ؟`;
+      document.getElementById('captcha-ans').value = '';
+    }
+    newCaptcha();
+
+    // ── LOCKOUT ───────────────────────────────────────────────
+    function getLockout() {
+      const data = JSON.parse(localStorage.getItem('auro_login_lock') || '{"attempts":0}');
+      return data;
+    }
+    function setLockout(data) { localStorage.setItem('auro_login_lock', JSON.stringify(data)); }
+    function isLocked() {
+      const d = getLockout();
+      if (d.lockedUntil && Date.now() < d.lockedUntil) return d.lockedUntil;
+      if (d.lockedUntil && Date.now() >= d.lockedUntil) { setLockout({attempts:0}); } // reset
+      return false;
+    }
+    function startLockoutTimer(until) {
+      const tick = () => {
+        const rem = until - Date.now();
+        if (rem <= 0) { location.reload(); return; }
+        const m = Math.floor(rem/60000), s = Math.floor((rem%60000)/1000);
+        document.getElementById('lockout-timer').textContent = `${m}:${String(s).padStart(2,'0')} دقيقة`;
+        setTimeout(tick, 1000);
+      };
+      document.getElementById('lockout-msg').style.display = 'block';
+      document.getElementById('login-btn').disabled = true;
+      tick();
+    }
+
+    // Check lockout on load
+    const _locked = isLocked();
+    if (_locked) startLockoutTimer(_locked);
+
+    // ── SESSION TOKEN ─────────────────────────────────────────
+    function makeToken() {
+      const raw = SESSION_SALT + Date.now() + Math.random();
+      let hash = 0;
+      for (let i = 0; i < raw.length; i++) { hash = ((hash << 5) - hash) + raw.charCodeAt(i); hash |= 0; }
+      return 'tk_' + Math.abs(hash).toString(36) + '_' + Date.now().toString(36);
+    }
+    function validateSession() {
+      const tok = sessionStorage.getItem('auro_tok');
+      const exp = parseInt(sessionStorage.getItem('auro_tok_exp') || '0');
+      return tok && tok.startsWith('tk_') && Date.now() < exp;
+    }
+    function refreshSession() {
+      sessionStorage.setItem('auro_tok_exp', Date.now() + SESSION_MS);
+    }
+
+    // ── AUTO-LOGOUT ───────────────────────────────────────────
+    function resetInactiveTimer() {
+      clearTimeout(inactiveTimer);
+      refreshSession();
+      inactiveTimer = setTimeout(() => {
+        alert('⏱️ انتهت جلستك بسبب عدم النشاط (30 دقيقة). سيتم تسجيل الخروج.');
+        logout();
+      }, SESSION_MS);
+    }
+    ['mousemove','keydown','click','scroll','touchstart'].forEach(ev =>
+      document.addEventListener(ev, resetInactiveTimer, { passive: true })
+    );
+
+    // ── AUTH INIT ─────────────────────────────────────────────
+    if (validateSession()) { showAdmin(); resetInactiveTimer(); }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !document.getElementById('login-overlay').classList.contains('hidden')) doLogin();
+    });
+
+    function doLogin() {
+      const locked = isLocked();
+      if (locked) { startLockoutTimer(locked); return; }
+
+      const u    = document.getElementById('username').value.trim();
+      const p    = document.getElementById('password').value;
+      const ans  = parseInt(document.getElementById('captcha-ans').value);
+      const errEl = document.getElementById('login-err');
+
+      // CAPTCHA check
+      if (isNaN(ans) || ans !== _captchaAnswer) {
+        errEl.textContent = '⚠️ إجابة الحساب غلط';
+        newCaptcha();
+        return;
+      }
+
+      if (u === ADMIN_USER && p === _ap) {
+        // Success — clear lockout, store token
+        setLockout({attempts:0});
+        const tok = makeToken();
+        sessionStorage.setItem('auro_tok', tok);
+        sessionStorage.setItem('auro_tok_exp', Date.now() + SESSION_MS);
+        document.getElementById('login-btn').textContent = '✓ جاري الدخول...';
+        setTimeout(() => { showAdmin(); resetInactiveTimer(); }, 400);
+      } else {
+        // Failed attempt
+        const d = getLockout();
+        d.attempts = (d.attempts || 0) + 1;
+        if (d.attempts >= MAX_ATTEMPTS) {
+          d.lockedUntil = Date.now() + LOCKOUT_MS;
+          setLockout(d);
+          startLockoutTimer(d.lockedUntil);
+          errEl.textContent = '';
+        } else {
+          setLockout(d);
+          errEl.textContent = `⚠️ خطأ في بيانات الدخول — محاولة ${d.attempts}/${MAX_ATTEMPTS}`;
+          document.getElementById('password').value = '';
+          document.getElementById('password').focus();
+          newCaptcha();
+        }
+      }
+    }
+    function logout() {
+      sessionStorage.removeItem('auro_tok');
+      sessionStorage.removeItem('auro_tok_exp');
+      location.reload();
+    }
+    function showAdmin() {
+      document.getElementById('login-overlay').classList.add('hidden');
+      document.getElementById('admin-main').classList.remove('hidden');
+      loadAll();
+    }
+
+    // ── LOAD ALL ──────────────────────────────────────────────
+    function loadAll() {
+      loadStats();
+      loadOverview();
+      loadReviews();
+      loadVisitors();
+      loadBookings();
+    }
+
+    function loadStats() {
+      const stats    = FeedbackService.getVisitorStats();
+      const reviews  = FeedbackService.getReviews('all');
+      const pending  = reviews.filter(r => r.status === 'pending').length;
+      const approved = reviews.filter(r => r.status === 'approved').length;
+
+      document.getElementById('s-total').textContent    = stats.totalAllTime;
+      document.getElementById('s-24h').textContent      = stats.active24h;
+      document.getElementById('s-7d').textContent       = stats.active7d;
+      document.getElementById('s-scroll').textContent   = stats.averageScroll + '%';
+      document.getElementById('s-reviews').textContent  = reviews.length;
+      document.getElementById('s-approved').textContent = approved;
+      document.getElementById('pending-badge').textContent = pending;
+    }
+
+    // ── OVERVIEW TAB ──────────────────────────────────────────
+    function loadOverview() {
+      const stats   = FeedbackService.getVisitorStats();
+      const reviews = FeedbackService.getReviews('all');
+
+      // Referrers
+      const refEl = document.getElementById('referrers-chart');
+      refEl.innerHTML = '';
+      const maxRef = stats.topReferrers[0]?.count || 1;
+      if (!stats.topReferrers.length) {
+        refEl.innerHTML = '<div style="color:var(--text-dim);font-size:0.8rem">لا توجد بيانات بعد</div>';
+      } else {
+        stats.topReferrers.forEach(r => {
+          refEl.innerHTML += `
+            <div class="bar-row">
+              <span class="bar-label">${escHtml(r.label)}</span>
+              <div class="bar-track"><div class="bar-val" style="width:${Math.round(r.count/maxRef*100)}%"></div></div>
+              <span class="bar-count">${r.count}</span>
+            </div>`;
+        });
+      }
+
+      // Cities
+      const cityEl = document.getElementById('cities-chart');
+      cityEl.innerHTML = '';
+      const maxCity = stats.topCities[0]?.count || 1;
+      if (!stats.topCities.length) {
+        cityEl.innerHTML = '<div style="color:var(--text-dim);font-size:0.8rem">لا توجد بيانات بعد</div>';
+      } else {
+        stats.topCities.forEach(c => {
+          cityEl.innerHTML += `
+            <div class="bar-row">
+              <span class="bar-label">${escHtml(c.label)}</span>
+              <div class="bar-track"><div class="bar-val" style="width:${Math.round(c.count/maxCity*100)}%"></div></div>
+              <span class="bar-count">${c.count}</span>
+            </div>`;
+        });
+      }
+
+      // Devices
+      const devEl   = document.getElementById('device-chart');
+      const total   = Math.max(1, stats.totalAllTime);
+      const devData = [
+        { icon: '📱', name: 'جوال',  count: stats.devices.mobile  || 0 },
+        { icon: '💻', name: 'كمبيوتر', count: stats.devices.desktop || 0 },
+        { icon: '🖥', name: 'تابلت',  count: stats.devices.tablet  || 0 },
+      ];
+      devEl.innerHTML = '';
+      let topDev = 0;
+      devData.forEach(d => { if (d.count > topDev) topDev = d.count; });
+      devData.forEach(d => {
+        const pct = Math.round(d.count / total * 100);
+        devEl.innerHTML += `
+          <div class="device-item${d.count === topDev && d.count > 0 ? ' top' : ''}">
+            <div class="device-icon">${d.icon}</div>
+            <div class="device-pct">${pct}%</div>
+            <div class="device-name">${d.name}</div>
+          </div>`;
+      });
+
+      // Avg rating
+      const rated  = reviews.filter(r => r.rating > 0);
+      const avgRat = rated.length ? (rated.reduce((a,r) => a + r.rating, 0) / rated.length).toFixed(1) : '—';
+      document.getElementById('avg-rating').textContent      = avgRat;
+      document.getElementById('avg-rating-note').textContent = rated.length ? `من ${rated.length} تقييم` : 'لا يوجد تقييمات بعد';
+    }
+
+    // ── REVIEWS TAB ───────────────────────────────────────────
+    function setFilter(el, filter) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentFilter = filter;
+      reviewPage = 1;
+      loadReviews();
+    }
+
+    function loadReviews() {
+      let reviews = FeedbackService.getReviews(currentFilter);
+
+      // Search
+      const q = (document.getElementById('review-search')?.value || '').trim().toLowerCase();
+      if (q) reviews = reviews.filter(r =>
+        (r.name || '').toLowerCase().includes(q) ||
+        (r.comment || '').toLowerCase().includes(q)
+      );
+
+      // Sort
+      const sort = document.getElementById('review-sort')?.value || 'newest';
+      if (sort === 'oldest')  reviews = [...reviews].reverse();
+      if (sort === 'highest') reviews.sort((a,b) => b.rating - a.rating);
+      if (sort === 'lowest')  reviews.sort((a,b) => a.rating - b.rating);
+
+      // Paginate
+      const total  = reviews.length;
+      const pages  = Math.ceil(total / PAGE_SIZE) || 1;
+      if (reviewPage > pages) reviewPage = pages;
+      const slice  = reviews.slice((reviewPage-1)*PAGE_SIZE, reviewPage*PAGE_SIZE);
+
+      const list = document.getElementById('reviews-list');
+      list.innerHTML = '';
+      if (!slice.length) {
+        list.innerHTML = `<div class="empty-state"><div class="icon">📭</div>لا توجد نتائج</div>`;
+      } else {
+        slice.forEach(r => list.appendChild(buildReviewCard(r)));
+      }
+
+      // Pagination
+      buildPag('review-pag', pages, reviewPage, (p) => { reviewPage = p; loadReviews(); });
+    }
+
+    function buildReviewCard(r) {
+      const date       = new Date(r.date).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const stars      = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+      const badgeClass = r.status === 'pending' ? 'badge-pending' : r.status === 'approved' ? 'badge-approved' : 'badge-rejected';
+      const badgeText  = r.status === 'pending' ? '⏳ بانتظار' : r.status === 'approved' ? '✅ معتمد' : '✕ مرفوض';
+      const devIcon    = r.device === 'mobile' ? '📱' : r.device === 'tablet' ? '🖥' : '💻';
+
+      const card = document.createElement('div');
+      card.className = `review-card-admin ${r.status}`;
+      card.innerHTML = `
+        <div>
+          <div class="rv-meta">
+            <span class="rv-name">${escHtml(r.name)}</span>
+            <span class="rv-stars">${stars}</span>
+            <span class="rv-date">${date}</span>
+            <span class="status-badge ${badgeClass}">${badgeText}</span>
+          </div>
+          ${r.comment
+            ? `<div class="rv-comment">"${escHtml(r.comment)}"</div>`
+            : `<div class="rv-comment" style="opacity:0.4">— لم يُكتب تعليق —</div>`}
+          <div class="rv-extra">
+            ${r.location ? `<span>📍 ${escHtml(r.location)}</span>` : ''}
+            ${r.device   ? `<span>${devIcon} ${escHtml(r.device)}</span>` : ''}
+            ${r.referrer ? `<span>🔗 ${escHtml(r.referrer)}</span>` : ''}
+          </div>
+        </div>
+        <div class="rv-actions">
+          <button class="btn-approve" onclick="updateReview('${r.id}','approved')">✓ موافقة</button>
+          <button class="btn-reject"  onclick="updateReview('${r.id}','rejected')">✕ رفض</button>
+          <button class="btn-reject"  style="margin-top:4px" onclick="deleteReview('${r.id}')">🗑 حذف</button>
+        </div>
+      `;
+      return card;
+    }
+
+    function updateReview(id, status) {
+      FeedbackService.updateReviewStatus(id, status);
+      showToast(status === 'approved' ? '✅ تمت الموافقة على التقييم' : '✕ تم الرفض');
+      loadStats(); loadReviews(); loadOverview();
+    }
+
+    function deleteReview(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا التقييم؟')) return;
+      FeedbackService.deleteReview(id);
+      showToast('🗑 تم الحذف');
+      loadStats(); loadReviews(); loadOverview();
+    }
+
+    // ── VISITORS TAB ──────────────────────────────────────────
+    function loadVisitors() {
+      const stats  = FeedbackService.getVisitorStats();
+      let visitors = stats.recent;
+
+      // Search
+      const q = (document.getElementById('visitor-search')?.value || '').trim().toLowerCase();
+      if (q) visitors = visitors.filter(v =>
+        (v.city || '').toLowerCase().includes(q) ||
+        (v.country || '').toLowerCase().includes(q) ||
+        (v.referrerLabel || '').toLowerCase().includes(q) ||
+        (v.device || '').toLowerCase().includes(q) ||
+        (v.browser || '').toLowerCase().includes(q)
+      );
+
+      // Sort
+      const sort = document.getElementById('visitor-sort')?.value || 'newest';
+      if (sort === 'scroll') visitors = [...visitors].sort((a,b) => (b.maxScroll||0) - (a.maxScroll||0));
+
+      // Paginate
+      const total  = visitors.length;
+      const pages  = Math.ceil(total / PAGE_SIZE) || 1;
+      if (visitorPage > pages) visitorPage = pages;
+      const slice  = visitors.slice((visitorPage-1)*PAGE_SIZE, visitorPage*PAGE_SIZE);
+
+      const body = document.getElementById('visitors-body');
+      body.innerHTML = '';
+
+      if (!slice.length) {
+        body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px">لا توجد بيانات</td></tr>`;
+      } else {
+        slice.forEach((v, idx) => {
+          const time   = new Date(v.lastActive).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+          const scroll = v.maxScroll || 0;
+          const devIcon= v.device === 'mobile' ? '📱' : v.device === 'tablet' ? '🖥' : '💻';
+          const rowId  = `vrow-${idx}`;
+          const utmTag = v.utm?.campaign ? `<span style="color:var(--gold);font-size:0.72rem"> · utm: ${escHtml(v.utm.campaign)}</span>` : '';
+
+          const tr = document.createElement('tr');
+          tr.className = 'visitor-row';
+          tr.onclick = () => document.getElementById(rowId)?.classList.toggle('open');
+          tr.innerHTML = `
+            <td>${time}</td>
+            <td>
+              <div style="font-size:0.85rem">${escHtml(v.city || '—')}، ${escHtml(v.country || '—')}</div>
+              <div style="font-size:0.72rem;color:var(--text-dim)">${escHtml(v.ip || '')}</div>
+            </td>
+            <td>
+              <span style="color:var(--gold-light)">${escHtml(v.referrerLabel || 'مباشر')}</span>${utmTag}
+            </td>
+            <td>${devIcon} <span style="font-size:0.8rem;color:var(--text-muted)">${escHtml(v.browser || '—')}</span></td>
+            <td><span class="page-tag">${escHtml(v.lastPage || '—')}</span></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="scroll-bar-mini"><div class="scroll-bar-fill" style="width:${scroll}%"></div></div>
+                <span style="font-size:0.78rem;color:var(--text-muted)">${scroll}%</span>
+              </div>
+            </td>
+          `;
+          body.appendChild(tr);
+
+          // Expandable detail row
+          const pages_visited = (v.pagesVisited || [v.lastPage || '—']).join(' ← ');
+          const detRow = document.createElement('tr');
+          detRow.innerHTML = `
+            <td colspan="6" style="padding:0">
+              <div class="visitor-detail" id="${rowId}">
+                <div class="detail-grid">
+                  <div class="detail-item"><span class="dk">المنطقة</span><span class="dv">${escHtml(v.region || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">المنطقة الزمنية</span><span class="dv">${escHtml(v.timezone || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">مزود الإنترنت</span><span class="dv">${escHtml(v.isp || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">نظام التشغيل</span><span class="dv">${escHtml(v.os || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">المتصفح</span><span class="dv">${escHtml(v.browser || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">أول زيارة</span><span class="dv">${new Date(v.firstVisit||v.lastActive).toLocaleString('ar-SA')}</span></div>
+                  <div class="detail-item"><span class="dk">🖥 دقة الشاشة</span><span class="dv">${escHtml(v.screenRes || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">💾 الذاكرة RAM</span><span class="dv">${v.ramGB ? v.ramGB + ' GB' : '—'}</span></div>
+                  <div class="detail-item"><span class="dk">⚙️ أنوية المعالج</span><span class="dv">${escHtml(String(v.cpuCores || '—'))}</span></div>
+                  <div class="detail-item"><span class="dk">🌐 اللغة</span><span class="dv">${escHtml(v.language || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">🎨 وضع الإضاءة</span><span class="dv">${escHtml(v.darkMode || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">📶 نوع الاتصال</span><span class="dv">${escHtml(v.connectionType || '—')}</span></div>
+                  <div class="detail-item"><span class="dk">حجم النافذة</span><span class="dv">${escHtml(v.windowSize || '—')}</span></div>
+                  <div class="detail-item" style="grid-column:1/-1"><span class="dk">مسار التصفح</span><span class="dv">${escHtml(pages_visited)}</span></div>
+                  ${v.referrer ? `<div class="detail-item" style="grid-column:1/-1"><span class="dk">الرابط الكامل للمصدر</span><span class="dv" style="font-size:0.72rem;word-break:break-all;color:var(--text-dim)">${escHtml(v.referrer.substring(0,120))}</span></div>` : ''}
+                </div>
+              </div>
+            </td>`;
+          body.appendChild(detRow);
+        });
+      }
+
+      buildPag('visitor-pag', pages, visitorPage, (p) => { visitorPage = p; loadVisitors(); });
+    }
+
+    // ── BOOKINGS TAB ─────────────────────────────────────────
+    let allBookingsData = [];
+
+    async function loadBookings() {
+      const list = document.getElementById('bookings-list');
+      if(list.children.length === 0) {
+        list.innerHTML = '<div style="text-align:center; padding:50px;">جاري تحميل الحجوزات... ⏳</div>';
+      }
+
+      let bookings = await AdminApp.getDocuments('bookings');
+      allBookingsData = bookings;
+      bookings = bookings.sort((a,b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+
+      const q = (document.getElementById('booking-search')?.value || '').toLowerCase();
+      const f = document.getElementById('booking-filter')?.value || 'all';
+      if (q) bookings = bookings.filter(b =>
+        (b.name||'').toLowerCase().includes(q) ||
+        (b.phone||'').toLowerCase().includes(q) ||
+        (b.city||'').toLowerCase().includes(q)
+      );
+      if (f !== 'all') bookings = bookings.filter(b => b.status === f);
+
+      const pending = allBookingsData.filter(b => b.status === 'pending').length;
+      document.getElementById('bookings-badge').textContent = pending;
+
+      populateImportDropdowns();
+
+      list.innerHTML = '';
+      if (!bookings.length) {
+        list.innerHTML = `<div class="empty-state"><div class="icon">📦</div>لا توجد حجوزات بعد</div>`;
+        return;
+      }
+      bookings.forEach(b => {
+        const date = new Date(b.date || b.createdAt).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+        let badgeCls, badgeTxt;
+        if(b.status === 'pending') { badgeCls = 'badge-pending'; badgeTxt = '⏳ قيد المراجعة'; }
+        else if(b.status === 'accepted') { badgeCls = 'badge-approved'; badgeTxt = '✅ قبول مبدئي'; }
+        else if(b.status === 'paid') { badgeCls = 'badge-approved'; badgeTxt = '💳 تم السداد'; }
+        else { badgeCls = 'badge-rejected'; badgeTxt = '✕ مرفوضة / ملغاة'; }
+
+        const card = document.createElement('div');
+        card.className = 'review-card-admin';
+        
+        let actionButtons = '';
+        if(b.status === 'pending') {
+          actionButtons = `
+            <button class="btn-approve" onclick="updateBooking('${b.id}','accepted')">قبول مبدئي ✅</button>
+            <button class="btn-reject"  onclick="updateBooking('${b.id}','rejected')">رفض ❌</button>
+            <button class="btn-reject"  style="margin-top:4px" onclick="deleteBooking('${b.id}')">حذف 🗑️</button>
+          `;
+        } else if(b.status === 'accepted') {
+          actionButtons = `
+            <button class="btn-approve" style="background:#0056b3;" onclick="issueInvoiceForBooking('${b.id}', 'quote')">فاتورة عرض سعر 📄</button>
+            <button class="btn-approve" style="background:#6f42c1;" onclick="issueContractForBooking('${b.id}')">إصدار عقد ✍️</button>
+            <button class="btn-approve" onclick="updateBooking('${b.id}','paid')">تم السداد 💳</button>
+            <button class="btn-reject" style="margin-top:4px" onclick="updateBooking('${b.id}','pending')">تراجع للمراجعة ⏪</button>
+          `;
+        } else if(b.status === 'paid') {
+          actionButtons = `
+            <button class="btn-approve" style="background:#198754;" onclick="issueInvoiceForBooking('${b.id}', 'final')">فاتورة ضريبية نهائية 🧾</button>
+            <button class="btn-approve" style="background:#fd7e14;" onclick="issueFormForBooking('${b.id}')">استمارة تسليم 📦</button>
+            <button class="btn-reject" style="margin-top:4px" onclick="updateBooking('${b.id}','accepted')">تراجع للقبول المبدئي ⏪</button>
+          `;
+        } else {
+          actionButtons = `
+            <button class="btn-approve" onclick="updateBooking('${b.id}','pending')">تراجع (استعادة) ⏪</button>
+            <button class="btn-reject"  onclick="deleteBooking('${b.id}')">حذف 🗑️</button>
+          `;
+        }
+
+        card.innerHTML = `
+          <div>
+            <div class="rv-meta">
+              <span class="rv-name">👤 ${escHtml(b.name)}</span>
+              <span class="rv-date">${date}</span>
+              <span class="status-badge ${badgeCls}">${badgeTxt}</span>
+            </div>
+            <div class="rv-comment">
+              📦 ${escHtml(b.pkg)} • ${b.cups || '0'} كوب • ${b.price || '0'} ريال<br>
+              ☕ ${escHtml(b.drinks)}<br>
+              📍 ${escHtml(b.city)} • 🎉 ${escHtml(b.event)}<br>
+              📅 ${escHtml(b.eventDate || b.date)} │ ${escHtml(b.time || '')}
+              ${b.notes ? `<br>📝 ${escHtml(b.notes)}` : ''}
+            </div>
+            <div class="rv-extra">
+              <span>📱 <a href="https://wa.me/966${(b.phone||'').replace(/^05/,'5')}" target="_blank" style="color:var(--gold)">${escHtml(b.phone)}</a></span>
+            </div>
+          </div>
+          <div class="rv-actions">
+            ${actionButtons}
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    async function updateBooking(id, status) {
+      const b = allBookingsData.find(x => x.id === id);
+      if (b) {
+        b.status = status;
+        await AdminApp.saveDocument('bookings', b);
+        showToast('✅ تم تحديث حالة الحجز');
+        loadBookings();
+      }
+    }
+
+    async function deleteBooking(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا الحجز نهائياً؟')) return;
+      await AdminApp.deleteDocument('bookings', id);
+      showToast('🗑 تم الحذف');
+      loadBookings();
+    }
+
+    // Workflow Generators
+    function issueInvoiceForBooking(id, type) {
+      const b = allBookingsData.find(x => x.id === id);
+      if(!b) return;
+      document.querySelector('[data-tab="tab-invoices"]').click();
+      setTimeout(() => {
+        try {
+          AdminInvoices.openModal();
+          document.getElementById('inv-client').value = b.name || '';
+          document.getElementById('inv-phone').value = b.phone || '';
+          document.getElementById('inv-type').value = type === 'quote' ? 'quote' : 'invoice';
+          document.getElementById('inv-city').value = b.city || '';
+          
+          let dateVal = '';
+          if (b.eventDate) dateVal = b.eventDate;
+          else if (b.date && typeof b.date === 'string') dateVal = b.date.split('T')[0];
+          document.getElementById('inv-event-date').value = dateVal;
+          
+          document.getElementById('inv-event-loc').value = b.city || '';
+          document.getElementById('inv-event-type').value = b.event || '';
+          document.getElementById('inv-corner').value = b.pkg || '';
+          document.getElementById('inv-guests').value = b.cups || '';
+          document.getElementById('inv-service-val').value = b.price || 0;
+          document.getElementById('inv-notes').value = b.notes || '';
+          if(b.drinks) {
+             document.getElementById('inv-additions').value = 'المشروبات: ' + b.drinks;
+          }
+          AdminInvoices.calculateTotal();
+        } catch(e) {
+          console.error("Error pre-filling invoice:", e);
+        }
+      }, 300);
+    }
+
+    function issueContractForBooking(id) {
+      const b = allBookingsData.find(x => x.id === id);
+      if(!b) return;
+      document.querySelector('[data-tab="tab-contracts"]').click();
+      setTimeout(() => {
+        AdminContracts.openModal();
+        document.getElementById('contract-client').value = b.name || '';
+        document.getElementById('contract-phone').value = b.phone || '';
+        document.getElementById('contract-city').value = b.city || '';
+        document.getElementById('contract-event-type').value = b.event || '';
+        document.getElementById('contract-event-date').value = b.eventDate || b.date.split('T')[0];
+        document.getElementById('contract-event-time').value = b.time || '';
+        document.getElementById('contract-event-loc').value = b.city || '';
+        document.getElementById('contract-corner').value = b.pkg || '';
+        document.getElementById('contract-guests').value = b.cups || '';
+        document.getElementById('contract-service-val').value = b.price || 0;
+        if(b.drinks) {
+           document.getElementById('contract-additions').value = 'المشروبات المتفق عليها: ' + b.drinks + '\nملاحظات: ' + (b.notes || '');
+        }
+        AdminContracts.calculateTotal();
+      }, 300);
+    }
+
+    function issueFormForBooking(id) {
+      const b = allBookingsData.find(x => x.id === id);
+      if(!b) return;
+      document.querySelector('[data-tab="tab-forms"]').click();
+      setTimeout(() => {
+        AdminForms.openModal();
+        document.getElementById('form-order-id').value = b.id || '';
+        document.getElementById('form-client').value = b.name || '';
+        document.getElementById('form-phone').value = b.phone || '';
+        document.getElementById('form-event-date').value = b.eventDate || b.date.split('T')[0];
+        document.getElementById('form-event-loc').value = b.city || '';
+        document.getElementById('form-corner').value = b.pkg || '';
+        document.getElementById('form-notes').value = b.notes || '';
+        
+        // Add a default item for the form
+        AdminForms.items = [{ name: 'معدات ' + b.pkg, condition: 'good', qty: 1 }];
+        AdminForms.renderItems();
+      }, 300);
+    }
+
+    // Dropdown Import Generators
+    function populateImportDropdowns() {
+      const invSelect = document.getElementById('inv-import-booking');
+      const conSelect = document.getElementById('con-import-booking');
+      const formSelect = document.getElementById('form-import-booking');
+      
+      let options = '<option value="">-- تعبئة يدوية (بدون استيراد) --</option>';
+      allBookingsData.forEach(b => {
+          const dateStr = b.eventDate || (typeof b.date === 'string' ? b.date.split('T')[0] : '');
+          options += `<option value="${b.id}">${b.name} - ${dateStr} (${b.pkg})</option>`;
+      });
+
+      if(invSelect) invSelect.innerHTML = options;
+      if(conSelect) conSelect.innerHTML = options;
+      if(formSelect) formSelect.innerHTML = options;
+    }
+
+    function importBookingToInvoice(id) {
+      if(!id) return;
+      const b = allBookingsData.find(x => x.id === id);
+      if(!b) return;
+      
+      try {
+        document.getElementById('inv-client').value = b.name || '';
+        document.getElementById('inv-phone').value = b.phone || '';
+        document.getElementById('inv-city').value = b.city || '';
+        
+        let dateVal = '';
+        if (b.eventDate) dateVal = b.eventDate;
+        else if (b.date && typeof b.date === 'string') dateVal = b.date.split('T')[0];
+        document.getElementById('inv-event-date').value = dateVal;
+        
+        document.getElementById('inv-event-loc').value = b.city || '';
+        document.getElementById('inv-event-type').value = b.event || '';
+        document.getElementById('inv-corner').value = b.pkg || '';
+        document.getElementById('inv-guests').value = b.cups || '';
+        document.getElementById('inv-service-val').value = b.price || 0;
+        document.getElementById('inv-notes').value = b.notes || '';
+        if(b.drinks) {
+           document.getElementById('inv-additions').value = 'المشروبات: ' + b.drinks;
+        }
+        AdminInvoices.calculateTotal();
+      } catch(e) { console.error(e); }
+    }
+
+    function importBookingToContract(id) {
+      if(!id) return;
+      const b = allBookingsData.find(x => x.id === id);
+      if(!b) return;
+
+      try {
+        document.getElementById('contract-client').value = b.name || '';
+        document.getElementById('contract-phone').value = b.phone || '';
+        document.getElementById('contract-city').value = b.city || '';
+        document.getElementById('contract-event-type').value = b.event || '';
+        
+        let dateVal = '';
+        if (b.eventDate) dateVal = b.eventDate;
+        else if (b.date && typeof b.date === 'string') dateVal = b.date.split('T')[0];
+        document.getElementById('contract-event-date').value = dateVal;
+        
+        document.getElementById('contract-event-time').value = b.time || '';
+        document.getElementById('contract-event-loc').value = b.city || '';
+        document.getElementById('contract-corner').value = b.pkg || '';
+        document.getElementById('contract-guests').value = b.cups || '';
+        document.getElementById('contract-service-val').value = b.price || 0;
+        if(b.drinks) {
+           document.getElementById('contract-additions').value = 'المشروبات المتفق عليها: ' + b.drinks + '\\nملاحظات: ' + (b.notes || '');
+        }
+        AdminContracts.calculateTotal();
+      } catch(e) { console.error(e); }
+    }
+
+    function importBookingToForm(id) {
+      if(!id) return;
+      const b = allBookingsData.find(x => x.id === id);
+      if(!b) return;
+
+      try {
+        document.getElementById('form-order-id').value = b.id || '';
+        document.getElementById('form-client').value = b.name || '';
+        document.getElementById('form-phone').value = b.phone || '';
+        
+        let dateVal = '';
+        if (b.eventDate) dateVal = b.eventDate;
+        else if (b.date && typeof b.date === 'string') dateVal = b.date.split('T')[0];
+        document.getElementById('form-event-date').value = dateVal;
+        
+        document.getElementById('form-event-loc').value = b.city || '';
+        document.getElementById('form-corner').value = b.pkg || '';
+        document.getElementById('form-notes').value = b.notes || '';
+        
+        AdminForms.items = [{ name: 'معدات ' + b.pkg, condition: 'good', qty: 1 }];
+        AdminForms.renderItems();
+      } catch(e) { console.error(e); }
+    }
+
+    function exportBookingsCSV() {
+      const bookings = JSON.parse(localStorage.getItem('auro_bookings') || '[]');
+      const headers = ['تاريخ الاستلام','الاسم','الجوال','المدينة','الباقة','الأكواب','السعر','المشروبات','المناسبة','تاريخ المناسبة','الوقت','الحالة','ملاحظات'];
+      const rows = bookings.map(b => [
+        new Date(b.date).toLocaleString('ar-SA'),
+        b.name, b.phone, b.city, b.pkg, b.cups, b.price, b.drinks,
+        b.event, b.eventDate, b.time,
+        b.status === 'pending' ? 'بانتظار' : b.status === 'confirmed' ? 'مؤكدة' : 'ملغاة',
+        b.notes || '—'
+      ]);
+      const csv = [headers,...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `auro_bookings_${Date.now()}.csv`; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ── SETTINGS ──────────────────────────────────────────────
+    async function confirmClear(type) {
+      const msg = type === 'visitors'
+        ? 'سيتم حذف كل سجلات الزوار نهائياً. هل أنت متأكد؟'
+        : 'سيتم حذف كل التقييمات نهائياً. هل أنت متأكد؟';
+      if (!confirm(msg)) return;
+
+      if (window.AURO_DB) {
+         try {
+           const snap = await window.AURO_DB.collection(type).get();
+           snap.forEach(doc => { doc.ref.delete() });
+         } catch(e) {}
+      }
+
+      if (type === 'visitors') localStorage.setItem('auro_visitors', JSON.stringify([]));
+      if (type === 'reviews')  localStorage.setItem('auro_reviews',  JSON.stringify([]));
+      showToast('🗑 تم الحذف بنجاح');
+      loadAll();
+    }
+
+    // ── TABS ──────────────────────────────────────────────────
+    // The new logic uses TabChanged event, but we keep this for backwards compatibility
+    function showTab(name) {
+      if(window.AdminApp) {
+        document.querySelector(`.nav-item[data-tab="tab-${name}"]`)?.click();
+      } else {
+        ['overview','reviews','bookings','visitors','settings'].forEach(t => {
+          document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+          document.getElementById('tab-btn-' + t)?.classList.toggle('active', t === name);
+        });
+        if (name === 'bookings') loadBookings();
+      }
+    }
+
+    // ── PAGINATION ────────────────────────────────────────────
+    function buildPag(elId, total, current, callback) {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      el.innerHTML = '';
+      if (total <= 1) return;
+      for (let i = 1; i <= total; i++) {
+        const btn = document.createElement('button');
+        btn.className = `pag-btn${i === current ? ' active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => callback(i);
+        el.appendChild(btn);
+      }
+    }
+
+    // ── TOAST ─────────────────────────────────────────────────
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('admin-toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // ── UTILS ─────────────────────────────────────────────────
+    function escHtml(s) {
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
