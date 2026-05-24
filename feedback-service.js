@@ -24,7 +24,7 @@ const FeedbackService = {
     if (!localStorage.getItem('auro_visitors')) localStorage.setItem('auro_visitors', JSON.stringify([]));
 
     // Load Firebase if not loaded yet
-    if (!document.getElementById('firebase-app-script')) {
+    if (typeof window.firebase === 'undefined') {
       const s1 = document.createElement('script');
       s1.id = 'firebase-app-script';
       s1.src = 'https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js';
@@ -35,13 +35,16 @@ const FeedbackService = {
         s2.src = 'https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js';
         document.head.appendChild(s2);
         s2.onload = () => {
-          firebase.initializeApp(firebaseConfig);
+          if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
           window.AURO_DB = firebase.firestore();
           window.AURO_FIREBASE_LOADED = true;
           this._setupListeners();
         };
       };
-    } else if (window.AURO_FIREBASE_LOADED) {
+    } else {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      window.AURO_DB = firebase.firestore();
+      window.AURO_FIREBASE_LOADED = true;
       this._setupListeners();
     }
   },
