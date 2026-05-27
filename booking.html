@@ -319,6 +319,10 @@
     </div>
 
     <script src="feedback-service.js"></script>
+    <script>
+      // Initialize Firebase early so it loads while user is filling the form
+      if (typeof FeedbackService !== 'undefined') FeedbackService.init();
+    </script>
     <script src="booking.js"></script>
 </body>
 
