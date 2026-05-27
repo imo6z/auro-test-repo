@@ -28,7 +28,7 @@ const AdminApp = {
     // Fallback if not loaded after 5s
     setTimeout(() => {
       if (!this.useFirebase) {
-        console.warn("⚠️ AdminApp: Firebase not loaded, falling back to localStorage.");
+        console.warn("⚠️ AdminApp: Firebase not loaded. Ensure you are connected to the internet and Firebase is properly configured.");
         document.dispatchEvent(new Event('AdminDBReady'));
       }
     }, 5000);
@@ -62,82 +62,49 @@ const AdminApp = {
 
   // Generic DB wrapper
   async saveDocument(collection, data) {
-    if (this.useFirebase) {
-      try {
-        if (data.id) {
-          await this.db.collection(collection).doc(data.id).set(data, { merge: true });
-          this.logAudit('UPDATE', collection, data.id);
-        } else {
-          const docRef = await this.db.collection(collection).add(data);
-          data.id = docRef.id;
-          await docRef.set(data, { merge: true }); // save ID inside doc
-          this.logAudit('CREATE', collection, data.id);
-        }
-        return data;
-      } catch (e) {
-        console.error("Firebase save error:", e);
-        return this.saveLocal(collection, data);
-      }
-    } else {
-      return this.saveLocal(collection, data);
+    if (!this.useFirebase) {
+      alert("تعذر الحفظ: قاعدة البيانات غير متصلة.");
+      throw new Error("Firebase DB not connected");
     }
-  },
-
-  saveLocal(collection, data) {
-    const key = `auro_${collection}`;
-    let items = JSON.parse(localStorage.getItem(key) || '[]');
-    if (!data.id) {
-      data.id = collection + '_' + Date.now();
-      items.push(data);
-    } else {
-      const idx = items.findIndex(i => i.id === data.id);
-      if (idx > -1) {
-        items[idx] = data;
+    try {
+      if (data.id) {
+        await this.db.collection(collection).doc(data.id).set(data, { merge: true });
+        this.logAudit('UPDATE', collection, data.id);
       } else {
-        items.push(data);
+        const docRef = await this.db.collection(collection).add(data);
+        data.id = docRef.id;
+        await docRef.set(data, { merge: true }); // save ID inside doc
+        this.logAudit('CREATE', collection, data.id);
       }
+      return data;
+    } catch (e) {
+      console.error("Firebase save error:", e);
+      alert("فشل الحفظ في قاعدة البيانات. تحقق من الصلاحيات والاتصال.");
+      throw e;
     }
-    localStorage.setItem(key, JSON.stringify(items));
-    return data;
   },
 
   async getDocuments(collection) {
-    if (this.useFirebase) {
-      try {
-        const snap = await this.db.collection(collection).orderBy('createdAt', 'desc').get();
-        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      } catch (e) {
-        console.warn("Firebase get error, using local fallback", e);
-        return this.getLocal(collection);
-      }
+    if (!this.useFirebase) return [];
+    try {
+      const snap = await this.db.collection(collection).orderBy('createdAt', 'desc').get();
+      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (e) {
+      console.error("Firebase get error:", e);
+      return [];
     }
-    return this.getLocal(collection);
   },
 
-  getLocal(collection) {
-    const key = `auro_${collection}`;
-    return JSON.parse(localStorage.getItem(key) || '[]').sort((a,b) => b.createdAt - a.createdAt);
-  },
-  
   async deleteDocument(collection, id) {
-    if (this.useFirebase) {
-      try {
-        await this.db.collection(collection).doc(id).delete();
-        this.logAudit('DELETE', collection, id);
-        return true;
-      } catch (e) {
-        return this.deleteLocal(collection, id);
-      }
+    if (!this.useFirebase) return false;
+    try {
+      await this.db.collection(collection).doc(id).delete();
+      this.logAudit('DELETE', collection, id);
+      return true;
+    } catch (e) {
+      console.error("Firebase delete error:", e);
+      return false;
     }
-    return this.deleteLocal(collection, id);
-  },
-  
-  deleteLocal(collection, id) {
-    const key = `auro_${collection}`;
-    let items = JSON.parse(localStorage.getItem(key) || '[]');
-    items = items.filter(i => i.id !== id);
-    localStorage.setItem(key, JSON.stringify(items));
-    return true;
   },
   
   showToast(msg, type='success') {
@@ -159,10 +126,6 @@ const AdminApp = {
     };
     if (this.useFirebase) {
        try { await this.db.collection('audit_logs').add(log); } catch(e){}
-    } else {
-       let logs = JSON.parse(localStorage.getItem('auro_audit_logs') || '[]');
-       logs.push(log);
-       localStorage.setItem('auro_audit_logs', JSON.stringify(logs));
     }
   }
 };
