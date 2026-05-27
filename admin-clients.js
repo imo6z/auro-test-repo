@@ -39,28 +39,6 @@ const AdminClients = {
 
     // We can also extract unique clients from auro_bookings
     let clients = await AdminApp.getDocuments(this.collection);
-    
-    // Auto-import from bookings if not exists
-    const bookings = JSON.parse(localStorage.getItem('auro_bookings') || '[]');
-    let importedCount = 0;
-    for(const b of bookings) {
-       if(b.phone && !clients.find(c => c.phone === b.phone)) {
-          const newClient = {
-             id: 'client_' + Date.now() + Math.random(),
-             name: b.name,
-             phone: b.phone,
-             city: b.city,
-             createdAt: Date.now()
-          };
-          await AdminApp.saveDocument(this.collection, newClient);
-          clients.push(newClient);
-          importedCount++;
-       }
-    }
-    
-    if(importedCount > 0) {
-       clients = await AdminApp.getDocuments(this.collection);
-    }
 
     list.innerHTML = '';
     if(clients.length === 0) {
