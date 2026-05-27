@@ -104,39 +104,39 @@
                 <p class="section-subtitle">كل باقة صُمِّمت بعناية لتناسب مناسبتك</p>
             </div>
             <div class="packages-grid">
-                <div class="pkg-card reveal visible" onclick="selectPkg(this,'الذهبية',20,1,350)">
+                <div class="pkg-card reveal visible" onclick="selectPkg(this,'الذهبية','20-35',1,450)">
                     <div class="pkg-icon">☕</div>
                     <div class="pkg-name">الذهبية</div>
-                    <div class="pkg-cups">20 <span>كوب</span></div>
-                    <div class="pkg-price">٣٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+                    <div class="pkg-cups">20-35 <span>كوب</span></div>
+                    <div class="pkg-price">٤٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
                     <div class="pkg-desc">مثالية للجمعات والمناسبات الخاصة</div>
                     <div class="pkg-features">
-                        <div class="pkg-feature">الركن الخشبي الفاخر</div>
-                        <div class="pkg-feature">حافظة ثلج</div>
+                        <div class="pkg-feature">الركن الخشبي والأكواب</div>
+                        <div class="pkg-feature">ترمس واحد وحافظة ثلج</div>
                         <div class="pkg-feature">مشروب واحد مختار</div>
                     </div>
                 </div>
-                <div class="pkg-card featured reveal visible" onclick="selectPkg(this,'البلاتينية',40,2,450)">
+                <div class="pkg-card featured reveal visible" onclick="selectPkg(this,'البلاتينية','40-70',2,650)">
                     <div class="pkg-icon">✨</div>
                     <div class="pkg-name" style="color:var(--gold)">البلاتينية</div>
-                    <div class="pkg-cups">40 <span>كوب</span></div>
-                    <div class="pkg-price">٤٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+                    <div class="pkg-cups">40-70 <span>كوب</span></div>
+                    <div class="pkg-price">٦٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
                     <div class="pkg-desc">للمناسبات الأنيقة والمتوسطة</div>
                     <div class="pkg-features">
-                        <div class="pkg-feature">الركن الخشبي الفاخر</div>
-                        <div class="pkg-feature">حافظة ثلج</div>
+                        <div class="pkg-feature">الركن الخشبي والأكواب</div>
+                        <div class="pkg-feature">ترمسان وحافظة ثلج</div>
                         <div class="pkg-feature">مشروبان مختاران</div>
                     </div>
                 </div>
-                <div class="pkg-card reveal visible" onclick="selectPkg(this,'الملكية',60,3,550)">
+                <div class="pkg-card reveal visible" onclick="selectPkg(this,'الملكية','60-100',3,850)">
                     <div class="pkg-icon">👑</div>
                     <div class="pkg-name">الملكية</div>
-                    <div class="pkg-cups">60 <span>كوب</span></div>
-                    <div class="pkg-price">٥٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
+                    <div class="pkg-cups">60-100 <span>كوب</span></div>
+                    <div class="pkg-price">٨٥٠ <span>ريال</span> <em class="pkg-deposit">+ ٥٠٠ تأمين</em></div>
                     <div class="pkg-desc">لحفلاتكم الكبرى والمناسبات الرسمية</div>
                     <div class="pkg-features">
-                        <div class="pkg-feature">الركن الخشبي الفاخر</div>
-                        <div class="pkg-feature">حافظة ثلج</div>
+                        <div class="pkg-feature">الركن الخشبي والأكواب</div>
+                        <div class="pkg-feature">٣ ترامس وحافظة ثلج</div>
                         <div class="pkg-feature">ثلاثة مشروبات مختارة</div>
                     </div>
                 </div>
@@ -248,6 +248,17 @@
                                 <input type="time" id="inp-time" class="glass-input" required />
                                 <span class="err-msg">الرجاء اختيار وقت البدء</span>
                             </div>
+                        </div>
+                        <div class="field" id="f-additions" style="margin-bottom:20px; background:rgba(255,255,255,0.02); padding:15px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                            <label style="margin-bottom:15px;">إضافات اختيارية <span style="color:var(--text-muted);font-size:.75rem">(يمكنك اختيار أكثر من خيار)</span></label>
+                            <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;">
+                                <input type="checkbox" id="inp-add-deco" value="زينة تخرج/عيد/مناسبة (+100 ريال)" style="width:20px; height:20px; accent-color:var(--gold);">
+                                <span>زينة تخرج / عيد / مناسبة (+١٠٠ ريال)</span>
+                            </label>
+                            <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                                <input type="checkbox" id="inp-add-host" value="عاملة ضيافة (+200 ريال)" style="width:20px; height:20px; accent-color:var(--gold);">
+                                <span>عاملة ضيافة (+٢٠٠ ريال)</span>
+                            </label>
                         </div>
                         <div class="field" id="f-notes" style="margin-bottom:0">
                             <label>ملاحظات إضافية <span
