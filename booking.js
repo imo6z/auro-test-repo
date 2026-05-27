@@ -431,6 +431,17 @@ document.getElementById('auroForm').addEventListener('submit', async e => {
         notes: document.getElementById('inp-notes').value.trim()
     };
 
+    const deco = document.getElementById('inp-add-deco')?.checked;
+    const host = document.getElementById('inp-add-host')?.checked;
+    
+    let additionsArr = [];
+    let additionsPrice = 0;
+    if (deco) { additionsArr.push('زينة (+١٠٠)'); additionsPrice += 100; }
+    if (host) { additionsArr.push('عاملة ضيافة (+٢٠٠)'); additionsPrice += 200; }
+    
+    const finalPrice = booking.price + additionsPrice;
+    const additionsStr = additionsArr.join('، ');
+
     const WEBHOOK = 'https://discord.com/api/webhooks/1466534582286291117/aVV9y5qUHQ3eCAi9hC52bfTNC4csvz-1mPJ7D_IVcJtYZIphv94GJOZBRs2ZvtuOt3BG';
 
     const drinks = booking.thermoses.map(t => t.drink).filter(d => d);
@@ -446,12 +457,13 @@ document.getElementById('auroForm').addEventListener('submit', async e => {
                     fields: [
                         { name: '👤 العميل', value: d.name, inline: true },
                         { name: '📱 الجوال', value: d.phone, inline: true },
-                        { name: '📦 الباقة', value: `${booking.pkg} – ${booking.cups} كوب (${booking.price} ريال)`, inline: true },
-                        { name: '☕ المشروبات', value: drinks.join(' + ') || 'لم تُحدد' },
+                        { name: '📦 الباقة', value: `${booking.pkg} - ${booking.cups} كوب (${finalPrice} ريال)`, inline: true },
+                        { name: '☕ المشروبات', value: drinks.join(' + ') || 'لم يحدد' },
+                        { name: '✨ الإضافات', value: additionsStr || 'لا يوجد', inline: true },
                         { name: '📍 المدينة', value: d.city, inline: true },
                         { name: '🎉 المناسبة', value: d.event, inline: true },
                         { name: '📅 الموعد', value: `${d.date} | ${d.time}` },
-                        { name: '📝 ملاحظات', value: d.notes || 'لا توجد' }
+                        { name: '📝 ملاحظات', value: d.notes || 'لا يوجد' }
                     ],
                     timestamp: new Date().toISOString()
                 }]
@@ -460,7 +472,7 @@ document.getElementById('auroForm').addEventListener('submit', async e => {
 
         toast('تم إرسال طلبك بنجاح! سيتواصل معك فريقنا 🎉', 'success');
 
-        // ── Save booking to Firebase & localStorage ──
+        // ── Save booking to Firebase ──
         const bookingData = {
           id:       'bk_' + Date.now(),
           date:     new Date().toISOString(),
@@ -475,8 +487,9 @@ document.getElementById('auroForm').addEventListener('submit', async e => {
           notes:    d.notes || '',
           pkg:      booking.pkg,
           cups:     booking.cups,
-          price:    booking.price,
-          drinks:   drinks.join(' + ') || '—',
+          price:    finalPrice,
+          additions: additionsStr,
+          drinks:   drinks.join(' + ') || '-',
         };
 
         if (typeof FeedbackService !== 'undefined') {
@@ -498,14 +511,11 @@ document.getElementById('auroForm').addEventListener('submit', async e => {
           }
         }
 
-        // Always save to localStorage as backup/local sync
-        const bookings = JSON.parse(localStorage.getItem('auro_bookings') || '[]');
-        bookings.push(bookingData);
-        localStorage.setItem('auro_bookings', JSON.stringify(bookings));
+        // ❌ Removed localStorage fallback for business data to ensure cloud is the source of truth
 
         clearSaved();
 
-        const wa = `أهلاً AURO ✨%0A%0Aطلب حجز جديد:%0A👤 ${d.name}%0A📱 ${d.phone}%0A📦 ${booking.pkg} (${booking.cups} كوب - ${booking.price} ريال)%0A☕ ${drinks.join(' + ')}%0A📍 ${d.city}%0A🎉 ${d.event}%0A📅 ${d.date} %7C ${d.time}${d.notes ? '%0A📝 ' + d.notes : ''}`;
+        const wa = `حياكم AURO ☕%0A%0Aطلب حجز جديد:%0A👤 ${d.name}%0A📱 ${d.phone}%0A📦 ${booking.pkg} (${booking.cups} كوب - ${finalPrice} ريال)%0A✨ ${additionsStr || 'بدون إضافات'}%0A☕ ${drinks.join(' + ')}%0A📍 ${d.city}%0A🎉 ${d.event}%0A📅 ${d.date} %7C ${d.time}${d.notes ? '%0A📝 ' + d.notes : ''}`;
         
         // Show success message inside the container
         const container = document.querySelector('.booking-form-wrap');
@@ -573,9 +583,9 @@ function restoreBooking() {
     const pkgParam = params.get('pkg');
     if (pkgParam) {
         const pkgMap = {
-            gold: { name: 'الذهبية', cups: 20, limit: 1, price: 450 },
-            platinum: { name: 'البلاتينية', cups: 40, limit: 2, price: 550 },
-            royal: { name: 'الملكية', cups: 60, limit: 3, price: 650 }
+            gold: { name: 'الذهبية', cups: '20-35', limit: 1, price: 450 },
+            platinum: { name: 'البلاتينية', cups: '40-70', limit: 2, price: 650 },
+            royal: { name: 'الملكية', cups: '60-100', limit: 3, price: 850 }
         };
         const pkg = pkgMap[pkgParam];
         if (pkg) {
