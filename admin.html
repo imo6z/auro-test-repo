@@ -376,8 +376,11 @@
         <div style="font-size:0.85rem;color:var(--text-muted);line-height:2;">
           <div>رابط التقييم: <code style="color:var(--gold)">feedback.html</code></div>
           <div>لوحة الإدارة: <code style="color:var(--gold)">admin.html</code></div>
-          <div>التخزين: <code style="color:var(--gold)">localStorage</code> (نفس الجهاز)</div>
+          <div>التخزين: <code style="color:var(--gold)">Firebase Cloud</code> (سحابي)</div>
           <div>API الموقع: <code style="color:var(--gold)">ipapi.co</code></div>
+          <div style="margin-top: 15px;">
+            <button class="btn-primary" style="padding: 8px 15px; font-size: 0.9rem; background: var(--gold); color: #000;" onclick="backupDatabase()">💾 أخذ نسخة احتياطية (Backup)</button>
+          </div>
         </div>
       </div>
       <div class="danger-zone">
@@ -1288,10 +1291,65 @@
         document.getElementById('form-corner').value = b.pkg || '';
         document.getElementById('form-notes').value = b.notes || '';
         
-        // Add a default item for the form
         AdminForms.items = [{ name: 'معدات ' + b.pkg, condition: 'good', qty: 1 }];
         AdminForms.renderItems();
       }, 300);
+    }
+
+    // Export CSV from Firebase data
+    function exportBookingsCSV() {
+      const bookings = allBookingsData || [];
+      if (bookings.length === 0) return alert("لا توجد حجوزات للتصدير");
+      
+      const headers = ['تاريخ الطلب','الاسم','الجوال','المدينة','الباقة','عدد الأكواب','المبلغ','المشروبات','الإضافات','تاريخ المناسبة','الوقت','الفعالية','ملاحظات'];
+      const rows = bookings.map(b => [
+        new Date(b.date).toLocaleString('ar-SA'),
+        b.name, b.phone, b.city, b.pkg, b.cups, b.price, b.drinks, b.additions || 'بدون إضافات',
+        b.eventDate, b.eventTime, b.event, b.notes
+      ]);
+      const csv = [headers,...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      a.href = url;
+      a.download = `auro_bookings_${Date.now()}.csv`;
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Backup entire database to JSON
+    async function backupDatabase() {
+      showToast('جاري تجهيز النسخة الاحتياطية...', 'info');
+      try {
+        const collections = ['bookings', 'invoices', 'contracts', 'forms', 'reviews', 'visitors'];
+        const backupData = {};
+        
+        for (const col of collections) {
+          if (window.AURO_DB) {
+            const snap = await window.AURO_DB.collection(col).get();
+            backupData[col] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          } else {
+            backupData[col] = [];
+          }
+        }
+        
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const dateStr = new Date().toISOString().split('T')[0];
+        a.download = `AURO_Backup_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('تم تحميل النسخة الاحتياطية بنجاح ✓', 'success');
+      } catch (e) {
+        console.error("Backup failed", e);
+        alert("فشل إنشاء النسخة الاحتياطية. تأكد من الاتصال بقاعدة البيانات.");
+      }
     }
 
     // Dropdown Import Generators
@@ -1309,6 +1367,28 @@
       if(invSelect) invSelect.innerHTML = options;
       if(conSelect) conSelect.innerHTML = options;
       if(formSelect) formSelect.innerHTML = options;
+    }
+
+    async function wipeDatabase(type) {
+      const msg = type === 'all' ? 'هل أنت متأكد من مسح جميع البيانات نهائياً؟ هذا الإجراء لا يمكن التراجع عنه!' : 'هل أنت متأكد من مسح سجل ' + type + '؟';
+      if (!confirm(msg)) return;
+      if (!confirm('تأكيد نهائي: هل أنت متأكد؟')) return;
+
+      showToast('جاري مسح البيانات السحابية...');
+      
+      try {
+        if (window.AURO_DB) {
+           const snap = await window.AURO_DB.collection(type).get();
+           const batch = window.AURO_DB.batch();
+           snap.forEach(doc => batch.delete(doc.ref));
+           await batch.commit();
+        }
+        showToast('تم مسح البيانات بنجاح', 'success');
+        setTimeout(() => location.reload(), 1500);
+      } catch (e) {
+        console.error("Wipe error", e);
+        alert("فشل مسح البيانات من السحابة.");
+      }
     }
 
     function importBookingToInvoice(id) {
@@ -1389,24 +1469,6 @@
         AdminForms.items = [{ name: 'معدات ' + b.pkg, condition: 'good', qty: 1 }];
         AdminForms.renderItems();
       } catch(e) { console.error(e); }
-    }
-
-    function exportBookingsCSV() {
-      const bookings = JSON.parse(localStorage.getItem('auro_bookings') || '[]');
-      const headers = ['تاريخ الاستلام','الاسم','الجوال','المدينة','الباقة','الأكواب','السعر','المشروبات','المناسبة','تاريخ المناسبة','الوقت','الحالة','ملاحظات'];
-      const rows = bookings.map(b => [
-        new Date(b.date).toLocaleString('ar-SA'),
-        b.name, b.phone, b.city, b.pkg, b.cups, b.price, b.drinks,
-        b.event, b.eventDate, b.time,
-        b.status === 'pending' ? 'بانتظار' : b.status === 'confirmed' ? 'مؤكدة' : 'ملغاة',
-        b.notes || '—'
-      ]);
-      const csv = [headers,...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
-      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `auro_bookings_${Date.now()}.csv`; a.click();
-      URL.revokeObjectURL(url);
     }
 
     // ── SETTINGS ──────────────────────────────────────────────
