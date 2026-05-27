@@ -496,8 +496,8 @@ document.getElementById('auroForm').addEventListener('submit', async e => {
           FeedbackService.init();
         }
 
-        // Wait up to 3 seconds for Firebase to load
-        let retries = 15;
+        // Wait up to 10 seconds for Firebase to load (for slow mobile networks)
+        let retries = 50;
         while (!window.AURO_DB && retries > 0) {
           await new Promise(r => setTimeout(r, 200));
           retries--;
